@@ -7,6 +7,7 @@ const submitButton = document.getElementById('submit-button');
 const feedbackEl = document.getElementById('feedback');
 const scoreEl = document.getElementById('score');
 const totalQuestionsEl = document.getElementById('total-questions');
+const quizContainer = document.getElementById('quiz-container');
 
 let currentScore = 0;
 let currentQuestionNumber = 0;
@@ -25,10 +26,11 @@ function generateRandomNumber(min, max) {
 function generateNewQuestion() {
     if (currentQuestionNumber >= totalQuestions) {
         // Quiz finished
-        questionEl.textContent = `Quiz Finished! Your total score is: ${currentScore} / ${totalQuestions}.`;
-        answerInput.style.display = 'none';
-        submitButton.style.display = 'none';
-        feedbackEl.textContent = 'Congratulations, you worked hard!';
+        quizContainer.innerHTML = `
+            <h3>Quiz Finished!</h3>
+            <p>Your total score is: ${currentScore} / ${totalQuestions}.</p>
+            <p style="color: green; font-weight: bold;">Congratulations, you worked hard!</p>
+        `;
         return;
     }
 
@@ -50,6 +52,9 @@ function generateNewQuestion() {
 
 // Function to check the answer
 function checkAnswer() {
+    // Eğer buton devre dışıysa, işlemi durdur
+    if (submitButton.disabled) return; 
+    
     const userAnswer = parseInt(answerInput.value);
 
     if (isNaN(userAnswer)) {
@@ -81,6 +86,7 @@ submitButton.addEventListener('click', checkAnswer);
 // Check when the user presses Enter
 answerInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
+        // Enter'a basıldığında da kontrol et
         checkAnswer();
     }
 });
