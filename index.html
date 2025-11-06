@@ -22,16 +22,15 @@
             background-color: #0a0a1a; /* Fallback */
             color: #ecf0f1; 
             
-            /* YENİ - Yüksek Kaliteli Galaksi Arka Planı */
             background-image: url('https://images.pexels.com/photos/1252890/pexels-photo-1252890.jpeg');
             background-size: cover;
-            background-position: center center; /* Başlangıç pozisyonu */
-            background-attachment: fixed; /* Paralaks için önemli */
+            background-position: center center;
+            background-attachment: fixed;
             
             min-height: 100vh; 
             display: flex;
             flex-direction: column;
-            overflow-x: hidden; /* Dikey kaydırmaya izin ver */
+            overflow-x: hidden; 
         }
         
         /* Başlık Alanı (Header) */
@@ -59,12 +58,12 @@
             gap: 30px; 
             flex-wrap: wrap; 
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Kutuları üste hizala */
         }
 
-        /* Quiz Konteyner Stil (Uzay Gemisi Paneli) */
-        #quiz-container, #irregular-verb-quiz-container {
-            flex: 1 1 45%; 
+        /* Quiz Konteyner Stil (Tüm 3 Kutu için) */
+        #quiz-container, #irregular-verb-quiz-container, #ai-quiz-generator-container {
+            flex: 1 1 30%; /* Üç kutu için esnek genişlik */
             min-width: 350px; 
             max-width: 550px;
             padding: 30px;
@@ -77,11 +76,21 @@
             animation: fadeIn 1s ease-out; 
             margin: 10px;
         }
+        
+        /* AI Quiz Kutusuna özel stil */
+        #ai-quiz-generator-container {
+             border-top: 5px solid #f1c40f; /* AI Kutusu için sarı */
+             box-shadow: 0 0 25px rgba(241, 196, 15, 0.3);
+             border: 1px solid #f1c40f;
+        }
 
         /* Hover Animasyonu */
-        #quiz-container:hover, #irregular-verb-quiz-container:hover {
+        #quiz-container:hover, #irregular-verb-quiz-container:hover, #ai-quiz-generator-container:hover {
             transform: translateY(-5px); 
             box-shadow: 0 0 35px rgba(0, 255, 255, 0.6);
+        }
+        #ai-quiz-generator-container:hover {
+            box-shadow: 0 0 35px rgba(241, 196, 15, 0.6);
         }
 
         /* Başlıklar ve Metinler */
@@ -94,7 +103,13 @@
             padding-bottom: 15px;
             margin-top: 0;
         }
-        p, span, li { 
+        #ai-quiz-generator-container h2 {
+             color: #f1c40f; /* AI Başlığı */
+             text-shadow: 0 0 3px #f1c40f, 0 0 5px #f1c40f; 
+             border-bottom-color: rgba(241, 196, 15, 0.2);
+        }
+        
+        p, span, li, label { 
             color: #ecf0f1; 
             text-shadow: 0 0 2px rgba(236, 240, 241, 0.7);
         }
@@ -102,6 +117,14 @@
             color: #f1c40f; 
             font-size: 1.7rem !important;
             text-shadow: 0 0 5px #f1c40f, 0 0 10px #f1c40f;
+        }
+        
+        /* Matematik Soru Stili */
+        .q-divider {
+            color: #00ffff;
+            margin: 0 10px;
+            text-shadow: 0 0 5px #00ffff;
+            font-weight: bold;
         }
 
         /* Giriş Kutuları */
@@ -154,13 +177,13 @@
             cursor: not-allowed;
         }
         
-        /* GÜNCELLEME: Hata düzeltme butonları için stil */
-        #gemini-example-button, #next-verb-button {
-            display: none; /* İkisi de başlangıçta gizli */
+        /* Hata düzeltme/AI butonları için stil */
+        #gemini-example-button, #next-verb-button, #math-hint-button {
+            display: none; /* Hepsi başlangıçta gizli */
             color: #0a0a1a; 
             margin-top: 10px;
         }
-        #gemini-example-button {
+        #gemini-example-button, #math-hint-button {
             background-color: #f1c40f; /* Sarı AI butonu */
         }
         #next-verb-button {
@@ -236,7 +259,7 @@
             color: #bdc3c7;
         }
 
-        /* === YENİ: Gemini Modal Stili === */
+        /* Gemini Modal Stili */
         .modal-content.gemini-modal-content {
             border-top-color: #f1c40f; 
             border-color: #f1c40f;
@@ -255,6 +278,43 @@
             max-height: 400px;
             overflow-y: auto;
         }
+        
+        /* AI Quiz Oluşturucu Stilleri */
+        #ai-quiz-display-area {
+            margin-top: 20px;
+        }
+        .ai-question {
+            margin-bottom: 15px;
+        }
+        .ai-question p {
+            font-weight: bold;
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+        .ai-option {
+            display: block;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .ai-option input {
+            margin-right: 10px;
+        }
+        #ai-quiz-result {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        /* YENİ: AI Quiz Açıklama Stili */
+        .ai-explanation {
+            display: none;
+            color: #f1c40f;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            border-left: 3px solid #f1c40f;
+            padding-left: 10px;
+            font-style: italic;
+        }
+
 
         /* Yükleme Spinner'ı */
         .spinner {
@@ -280,6 +340,47 @@
             border-top: 1px solid #00ffff;
             background: rgba(0, 0, 0, 0.3);
         }
+        
+        /* ======================================= */
+        /* YENİ: Mobil Uyumluluk (Responsive) */
+        /* ======================================= */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            main {
+                flex-direction: column; /* Kutuları alt alta yığ */
+                align-items: center; /* Kutuları ortala */
+                padding: 10px;
+            }
+            
+            #quiz-container, #irregular-verb-quiz-container, #ai-quiz-generator-container {
+                flex-basis: 100%; /* Tam genişlik kapla */
+                min-width: 90%; /* Ekranın %90'ı */
+                margin: 10px 0;
+            }
+            
+            #question, #verb-base-form {
+                font-size: 1.4rem !important;
+            }
+            
+            button, #parent-access-button {
+                font-size: 1rem;
+                padding: 10px 15px;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            #parent-access-button {
+                bottom: 10px;
+                right: 10px;
+            }
+        }
+        
     </style>
 </head>
 <body>
@@ -303,7 +404,6 @@
                 
                 <button id="verb-submit-button">Check Verb</button>
                 
-                <!-- GÜNCELLEME: Hata düzeltme butonları eklendi -->
                 <button id="gemini-example-button">✨ Show Example Sentence</button>
                 <button id="next-verb-button">Next Verb &rarr;</button>
                 
@@ -316,9 +416,9 @@
             </div>
         </div>
 
-        <!-- MULTIPLICATION QUIZ (Math) -->
+        <!-- MULTIPLICATION QUIZ (Math) - YENİLENDİ -->
         <div id="quiz-container">
-            <h2>Math Exercise: Multiplication</h2>
+            <h2>Math Exercise: Operations</h2>
             
             <p id="question" style="font-size: 1.5rem; font-weight: bold;">Loading question...</p>
             
@@ -326,10 +426,31 @@
             
             <button id="submit-button">Check</button>
             
+            <button id="math-hint-button">✨ Підказка? (Hint?)</button>
+            
             <p id="feedback" style="margin-top: 15px; font-weight: bold;"></p>
             
             <div id="score-container" style="margin-top: 20px;">
                 <p>Score: <span id="score">0</span> / <span id="total-questions">10</span></p>
+            </div>
+        </div>
+        
+        <!-- YENİ: AI QUIZ GENERATOR - Adı Değişti -->
+        <div id="ai-quiz-generator-container">
+            <h2>✨ Galactic Quiz Zone</h2>
+            
+            <div id="ai-quiz-setup">
+                <p>Введіть тему, яку хочете вивчити (напр. Planets, Animals, Colors):</p>
+                <input type="text" id="ai-topic-input" placeholder="Введіть тему...">
+                <button id="ai-generate-button">Generate Quiz</button>
+            </div>
+            
+            <div id="ai-quiz-display-area" style="display: none;">
+                <!-- Quiz soruları buraya dinamik olarak eklenecek -->
+            </div>
+            
+            <div id="ai-quiz-result" style="display: none;">
+                <!-- Quiz sonucu buraya gelecek -->
             </div>
         </div>
         
@@ -357,7 +478,6 @@
 
             <div id="reports-area" style="display: none;">
                 <h3 style="color: #1abc9c;">Selin's Progress Reports</h3>
-                <!-- === YENİ: Gemini Özet Butonu === -->
                 <button id="gemini-summary-button" style="background-color: #f1c40f; color: #0a0a1a; margin-bottom: 15px;">✨ Get AI Progress Summary</button>
                 <ul id="reports-list">
                     <li>Loading results...</li>
@@ -366,7 +486,7 @@
         </div>
     </div>
 
-    <!-- === YENİ: Gemini AI Modal === -->
+    <!-- Gemini AI Modal -->
     <div id="gemini-modal" class="modal">
         <div class="modal-content gemini-modal-content">
             <span class="close-button gemini-close-button">&times;</span>
@@ -506,7 +626,7 @@
         }
         
         // =======================================
-        // 4. Gemini API Fonksiyonları (YENİ EKLENDİ)
+        // 4. Gemini API Fonksiyonları (API Anahtarlı)
         // =======================================
 
         const geminiModal = document.getElementById('gemini-modal');
@@ -535,21 +655,14 @@
         geminiCloseButton.onclick = hideGeminiModal;
         
         // Gemini API'yi çağıran ana fonksiyon
-        async function callGeminiAPI(userPrompt, systemInstructionText = null, useGrounding = false) {
+        async function callGeminiAPI(userPrompt, systemInstructionText = null, useGrounding = false, jsonSchema = null) {
             showGeminiModal("✨ AI Assistant is thinking...");
             
-            // GÜNCELLEME: Sizin API anahtarınız eklendi
             const YOUR_API_KEY = "AIzaSyCi4V_K9kfGM2BU-DzF2uWG1mYlYyX17I4"; 
-            
-            // Canvas ortamı anahtarını (varsa) kullan, yoksa sizin anahtarınızı kullan
-            // (Canvas'ın `__GEMINI_API_KEY__` değişkenini kullandığını varsayıyoruz, yoksa sizinkini kullanır)
             const apiKey = (typeof __GEMINI_API_KEY__ !== 'undefined' && __GEMINI_API_KEY__ !== "") ? __GEMINI_API_KEY__ : YOUR_API_KEY;
-            
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-            // API anahtarı yoksa hata ver (GitHub'da unutulursa)
             if (!apiKey) {
-                // Ukraynaca hata mesajı
                 updateGeminiModal("Помилка: API-ключ не налаштовано. AI-функції вимкнено.");
                 return;
             }
@@ -559,13 +672,16 @@
             };
 
             if (systemInstructionText) {
-                payload.systemInstruction = {
-                    parts: [{ text: systemInstructionText }]
-                };
+                payload.systemInstruction = { parts: [{ text: systemInstructionText }] };
             }
-            
             if (useGrounding) {
                 payload.tools = [{ "google_search": {} }];
+            }
+            if (jsonSchema) {
+                payload.generationConfig = {
+                    responseMimeType: "application/json",
+                    responseSchema: jsonSchema
+                };
             }
 
             let retries = 3;
@@ -580,7 +696,6 @@
                     });
 
                     if (!response.ok) {
-                        // GÜNCELLEME: 403 hatasını yakala
                         if (response.status === 403) {
                              throw new Error("API key is not valid or permissions are missing. (403 Forbidden)");
                         }
@@ -591,6 +706,10 @@
                     
                     if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts[0].text) {
                         const text = result.candidates[0].content.parts[0].text;
+                        if (jsonSchema) {
+                            hideGeminiModal(); 
+                            return text; 
+                        }
                         updateGeminiModal(text); 
                         return text;
                     } else {
@@ -604,8 +723,7 @@
                     console.error("Gemini API call failed:", error);
                     retries--;
                     if (retries === 0) {
-                        // Ukraynaca hata mesajı
-                        const errorMsg = `Помилка виклику AI: ${error.message}. Ця функція може не працювати поза платформою Canvas.`;
+                        const errorMsg = `Помилка виклику AI: ${error.message}.`;
                         updateGeminiModal(errorMsg);
                         return errorMsg;
                     }
@@ -615,13 +733,12 @@
             }
         }
         
-        // Gemini Özet Butonu (YENİ EKLENDİ)
+        // Gemini Özet Butonu
         geminiSummaryButton.onclick = async () => {
             try {
                 const reports = JSON.parse(localStorage.getItem('selinQuizReports')) || [];
                 if (reports.length === 0) {
                     showGeminiModal("✨ AI Summary");
-                    // Ukraynaca mesaj
                     updateGeminiModal("Ще немає звітів для узагальнення. Селін повинна спочатку пройти декілька вікторин!");
                     return;
                 }
@@ -630,9 +747,7 @@
                     `Quiz: ${r.quizType}, Correct: ${r.isCorrect}, Detail: ${r.detail}`
                 ).slice(0, 20).join('\n'); 
 
-                // Gemini'ye Ukraynaca cevap vermesini söyle
                 const systemPrompt = "You are a friendly and encouraging educational assistant. Analyze the following quiz results from a student named Selin. Provide a very short, 2-3 bullet point summary of her progress. Identify one area she is strong in and one area she could practice more. **Respond in Ukrainian.**";
-                
                 const userPrompt = `Here are Selin's latest quiz results (most recent first):\n${reportsText}`;
 
                 await callGeminiAPI(userPrompt, systemPrompt);
@@ -644,10 +759,10 @@
         };
 
         // =======================================
-        // 5. Quiz Mantığına Veri Kaydını Entegre Etme
+        // 5. Quiz Mantığı
         // =======================================
 
-        // 1. Math Multiplication Quiz Logic (English)
+        // 1. Math Operations Quiz Logic (YENİLENDİ)
         const questionEl = document.getElementById('question');
         const answerInput = document.getElementById('answer-input');
         const submitButton = document.getElementById('submit-button');
@@ -655,6 +770,7 @@
         const scoreEl = document.getElementById('score');
         const totalQuestionsEl = document.getElementById('total-questions');
         const quizContainer = document.getElementById('quiz-container');
+        const mathHintButton = document.getElementById('math-hint-button'); 
 
         let currentScore = 0;
         let currentQuestionNumber = 0;
@@ -666,6 +782,7 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
+        // Dört İşlemli Soru Üretici
         function generateNewQuestion() {
             if (currentQuestionNumber >= totalQuestions) {
                 quizContainer.innerHTML = `
@@ -677,17 +794,56 @@
             }
 
             currentQuestionNumber++;
-            const num1 = generateRandomNumber(1, 10);
-            const num2 = generateRandomNumber(1, 10);
-            correctAnswer = num1 * num2;
+            mathHintButton.style.display = 'none'; 
             
-            currentMathQuestion = `${num1} x ${num2}`;
-            questionEl.textContent = "Question " + currentQuestionNumber + ": " + currentMathQuestion + " = ?";
+            const opType = Math.floor(Math.random() * 4); // 0:+, 1:-, 2:*, 3:/
+            let num1, num2, operationSymbol;
+
+            switch(opType) {
+                case 0: // Toplama (Sonuç < 100)
+                    num1 = generateRandomNumber(1, 70);
+                    num2 = generateRandomNumber(1, 29);
+                    correctAnswer = num1 + num2;
+                    operationSymbol = '+';
+                    break;
+                case 1: // Çıkarma (Sonuç negatif olmasın)
+                    num1 = generateRandomNumber(10, 99);
+                    num2 = generateRandomNumber(1, num1); 
+                    correctAnswer = num1 - num2;
+                    operationSymbol = '-';
+                    break;
+                case 2: // Çarpma (Sonuç < 100)
+                    num1 = generateRandomNumber(2, 12);
+                    num2 = generateRandomNumber(2, 9);
+                    if (num1 * num2 > 100) { // Ekstra kontrol
+                         num1 = generateRandomNumber(2, 9);
+                    }
+                    correctAnswer = num1 * num2;
+                    operationSymbol = 'x';
+                    break;
+                case 3: // Bölme (Kalansız)
+                    num2 = generateRandomNumber(2, 10); 
+                    let result = generateRandomNumber(2, 10);
+                    num1 = num2 * result; 
+                    correctAnswer = result;
+                    operationSymbol = '÷';
+                    break;
+            }
+            
+            currentMathQuestion = `${num1} ${operationSymbol} ${num2}`;
+            questionEl.innerHTML = `Question ${currentQuestionNumber} <span class="q-divider">>></span> ${currentMathQuestion} = ?`;
             answerInput.value = '';
             feedbackEl.textContent = '';
             submitButton.disabled = false;
             answerInput.focus();
         }
+
+        // Matematik İpucu Butonu Olayı
+        mathHintButton.onclick = async () => {
+            const systemPrompt = "You are a helpful math teacher. The student is 10 years old. Provide a very simple, one-sentence hint in **Ukrainian** for the following math problem. Do not give the answer.";
+            const userPrompt = `Provide a hint for: ${currentMathQuestion}`;
+            await callGeminiAPI(userPrompt, systemPrompt);
+        };
 
         async function checkAnswer() {
             if (submitButton.disabled) return; 
@@ -707,15 +863,16 @@
                 feedbackEl.textContent = 'CORRECT! You are great.';
                 feedbackEl.style.color = '#1abc9c';
                 submitButton.disabled = true;
+                mathHintButton.style.display = 'none'; 
                 setTimeout(generateNewQuestion, 1000);
             } else {
                 feedbackEl.textContent = 'WRONG! Try again.';
                 feedbackEl.style.color = '#e74c3c';
+                mathHintButton.style.display = 'inline-block'; 
             }
 
-            // Raporu LocalStorage'a kaydet
             await saveQuizResult(
-                "Math", 
+                "Math Operations", 
                 currentScore, 
                 currentQuestionNumber, 
                 isCorrect, 
@@ -732,28 +889,9 @@
 
         generateNewQuestion();
 
-        // 2. Irregular Verbs Quiz Logic (English)
+        // 2. Irregular Verbs Quiz Logic
         const irregularVerbs = [
-            { v1: "be", v2: "was/were", v3: "been" },
-            { v1: "go", v2: "went", v3: "gone" },
-            { v1: "do", v2: "did", v3: "done" },
-            { v1: "see", v2: "saw", v3: "seen" },
-            { v1: "come", v2: "came", v3: "come" },
-            { v1: "eat", v2: "ate", v3: "eaten" },
-            { v1: "write", v2: "wrote", v3: "written" },
-            { v1: "run", v2: "ran", v3: "run" },
-            { v1: "take", v2: "took", v3: "taken" },
-            { v1: "make", v2: "made", v3: "made" },
-            { v1: "say", v2: "said", v3: "said" },
-            { v1: "get", v2: "got", v3: "got/gotten" },
-            { v1: "give", v2: "gave", v3: "given" },
-            { v1: "find", v2: "found", v3: "found" },
-            { v1: "know", v2: "knew", v3: "known" },
-            { v1: "think", v2: "thought", v3: "thought" },
-            { v1: "tell", v2: "told", v3: "told" },
-            { v1: "become", v2: "became", v3: "become" },
-            { v1: "leave", v2: "left", v3: "left" },
-            { v1: "hear", v2: "heard", v3: "heard" },
+            { v1: "be", v2: "was/were", v3: "been" }, { v1: "go", v2: "went", v3: "gone" }, { v1: "do", v2: "did", v3: "done" }, { v1: "see", v2: "saw", v3: "seen" }, { v1: "come", v2: "came", v3: "come" }, { v1: "eat", v2: "ate", v3: "eaten" }, { v1: "write", v2: "wrote", v3: "written" }, { v1: "run", v2: "ran", v3: "run" }, { v1: "take", v2: "took", v3: "taken" }, { v1: "make", v2: "made", v3: "made" }, { v1: "say", v2: "said", v3: "said" }, { v1: "get", v2: "got", v3: "got/gotten" }, { v1: "give", v2: "gave", v3: "given" }, { v1: "find", v2: "found", v3: "found" }, { v1: "know", v2: "knew", v3: "known" }, { v1: "think", v2: "thought", v3: "thought" }, { v1: "tell", v2: "told", v3: "told" }, { v1: "become", v2: "became", v3: "become" }, { v1: "leave", v2: "left", v3: "left" }, { v1: "hear", v2: "heard", v3: "heard" },
         ];
 
         const verbBaseFormEl = document.getElementById('verb-base-form');
@@ -765,8 +903,6 @@
         const verbTotalQuestionsEl = document.getElementById('verb-total-questions');
         const irregularVerbQuizContainer = document.getElementById('irregular-verb-quiz-container');
         const geminiExampleButton = document.getElementById('gemini-example-button'); 
-        
-        // GÜNCELLEME: Yeni buton eklendi
         const nextVerbButton = document.getElementById('next-verb-button');
 
         let currentVerbScore = 0;
@@ -804,7 +940,6 @@
             verbFeedbackEl.textContent = '';
             verbSubmitButton.disabled = false;
             
-            // GÜNCELLEME: Butonları gizle
             geminiExampleButton.style.display = 'none'; 
             nextVerbButton.style.display = 'none';
             
@@ -834,16 +969,12 @@
                 feedbackMessage = 'PERFECT! Both forms are correct.';
                 verbFeedbackEl.style.color = '#1abc9c';
                 isCorrect = true;
-                
-                // GÜNCELLEME: Doğruysa otomatik geç
                 setTimeout(generateNewVerbQuestion, 2000);
             } else {
                 feedbackMessage = 'WRONG! The correct forms are: ';
                 feedbackMessage += `V2: ${currentVerb.v2}, V3: ${currentVerb.v3}.`;
                 verbFeedbackEl.style.color = '#e74c3c';
                 isCorrect = false;
-                
-                // GÜNCELLEME: Yanlışsa butonları göster
                 geminiExampleButton.style.display = 'inline-block'; 
                 nextVerbButton.style.display = 'inline-block'; 
             }
@@ -861,8 +992,6 @@
         }
 
         verbSubmitButton.addEventListener('click', checkVerbAnswer);
-        
-        // GÜNCELLEME: Yeni butonun tıklama olayı
         nextVerbButton.addEventListener('click', generateNewVerbQuestion);
         
         geminiExampleButton.onclick = async () => {
@@ -870,7 +999,6 @@
 
             const verb = currentVerbData;
             const systemPrompt = "You are an English teacher. The user is a 10-year-old student. Write one, very simple example sentence for *each* of the 3 verb forms (V1, V2, V3). First show the sentence in English, then provide the **Ukrainian translation** on a new line. Format it clearly.";
-            
             const simplePrompt = `Write 3 very simple example sentences for a 10-year-old using the verb "${verb.v1}".
 1. One sentence using the base form (${verb.v1}).
 2. One sentence using the simple past form (${verb.v2}).
@@ -886,6 +1014,157 @@
         });
 
         generateNewVerbQuestion();
+        
+        // =======================================
+        // 6. YENİ: AI Quiz Generator Logic
+        // =======================================
+        
+        const aiTopicInput = document.getElementById('ai-topic-input');
+        const aiGenerateButton = document.getElementById('ai-generate-button');
+        const aiQuizDisplayArea = document.getElementById('ai-quiz-display-area');
+        const aiQuizSetup = document.getElementById('ai-quiz-setup');
+        const aiQuizResult = document.getElementById('ai-quiz-result');
+        
+        let aiQuizCorrectAnswers = []; 
+        let aiQuizExplanations = []; // YENİ: Açıklamaları tutar
+
+        // YENİ: Gemini'nin uyması gereken JSON Şeması (Açıklama eklendi)
+        const quizSchema = {
+            type: "OBJECT",
+            properties: {
+                questions: {
+                    type: "ARRAY",
+                    items: {
+                        type: "OBJECT",
+                        properties: {
+                            question: { type: "STRING" },
+                            options: { type: "ARRAY", items: { type: "STRING" } },
+                            correctAnswerIndex: { type: "NUMBER" },
+                            explanation: { type: "STRING" } // YENİ: Açıklama alanı
+                        },
+                        required: ["question", "options", "correctAnswerIndex", "explanation"]
+                    }
+                }
+            },
+            required: ["questions"]
+        };
+
+        // Quiz oluşturma butonu
+        aiGenerateButton.onclick = async () => {
+            const topic = aiTopicInput.value.trim();
+            if (topic === "") {
+                alert("Please enter a topic."); // (Bunu daha sonra şık bir modal'a çevirebiliriz)
+                return;
+            }
+            
+            aiQuizSetup.style.display = 'none';
+            aiQuizResult.style.display = 'none';
+            aiQuizDisplayArea.style.display = 'block';
+            aiQuizDisplayArea.innerHTML = '<div class="spinner"></div><p style="text-align: center;">Generating your quiz...</p>';
+
+            // YENİ: Sistem talimatı güncellendi (8 yaş, ESL, Ukraynaca açıklama)
+            const systemPrompt = "You are a quiz generator for an 8-year-old student (Selin) who is learning English as a second language. The questions must be **very simple** (A1/A2 level). Create a 5-question multiple-choice quiz (4 options each) about the user's topic. **All quiz text (questions and options) must be in simple English.** For *each* question, provide a brief, simple **explanation** (in **Ukrainian**) explaining *why* the correct answer is right. This explanation will be shown to the student *after* they answer.";
+            const userPrompt = `Topic: ${topic}`;
+
+            try {
+                // Gemini'yi JSON moduyla çağır
+                const jsonString = await callGeminiAPI(userPrompt, systemPrompt, false, quizSchema);
+                const quizData = JSON.parse(jsonString);
+                
+                if (quizData && quizData.questions) {
+                    renderAiQuiz(quizData.questions);
+                } else {
+                    throw new Error("Failed to generate quiz data in the correct format.");
+                }
+            } catch (error) {
+                console.error("Failed to generate or parse AI quiz:", error);
+                aiQuizDisplayArea.innerHTML = `<p style="color: #e74c3c;">Error generating quiz: ${error.message}</p>`;
+                aiQuizSetup.style.display = 'block'; // Kuruluma geri dön
+            }
+        };
+        
+        // Gemini'den gelen quizi HTML'e dönüştürür
+        function renderAiQuiz(questions) {
+            aiQuizCorrectAnswers = questions.map(q => q.correctAnswerIndex);
+            aiQuizExplanations = questions.map(q => q.explanation); // YENİ: Açıklamaları sakla
+            let quizHtml = '';
+            
+            questions.forEach((q, qIndex) => {
+                quizHtml += `<div class="ai-question" id="ai-q-${qIndex}">`;
+                quizHtml += `<p>${qIndex + 1}. ${q.question}</p>`;
+                q.options.forEach((option, oIndex) => {
+                    quizHtml += `
+                        <label class="ai-option">
+                            <input type="radio" name="ai-q-${qIndex}" value="${oIndex}">
+                            ${option}
+                        </label>
+                    `;
+                });
+                // YENİ: Açıklama için gizli bir div ekle
+                quizHtml += `<div class="ai-explanation" id="ai-exp-${qIndex}"></div>`;
+                quizHtml += `</div>`;
+            });
+            
+            quizHtml += `<button id="ai-check-button" style="background-color: #f1c40f; color: #0a0a1a; margin-top: 20px;">Check AI Quiz</button>`;
+            aiQuizDisplayArea.innerHTML = quizHtml;
+            
+            // Yeni butona olay ekle
+            document.getElementById('ai-check-button').onclick = checkAiQuiz;
+        }
+
+        // Dinamik quiz'in cevaplarını kontrol eder
+        function checkAiQuiz() {
+            let score = 0;
+            aiQuizCorrectAnswers.forEach((correctIndex, qIndex) => {
+                const radios = document.getElementsByName(`ai-q-${qIndex}`);
+                let userAnswer = -1;
+                for (let i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        userAnswer = parseInt(radios[i].value);
+                        break;
+                    }
+                }
+                
+                const questionDiv = document.getElementById(`ai-q-${qIndex}`);
+                const labels = questionDiv.getElementsByTagName('label');
+                
+                // YENİ: Açıklamayı al ve göster
+                const explanation = aiQuizExplanations[qIndex];
+                const expDiv = document.getElementById(`ai-exp-${qIndex}`);
+                
+                if (userAnswer === correctIndex) {
+                    score++;
+                    labels[userAnswer].style.color = '#1abc9c'; // Doğruyu yeşil yap
+                    expDiv.innerHTML = `<strong>Пояснення:</strong> ${explanation}`; // Açıklamayı göster
+                    expDiv.style.color = '#1abc9c';
+                    expDiv.style.display = 'block';
+                } else {
+                    if (userAnswer !== -1) {
+                         labels[userAnswer].style.color = '#e74c3c'; // Yanlışı kırmızı yap
+                    }
+                    labels[correctIndex].style.color = '#1abc9c'; // Doğruyu yine de yeşil göster
+                    
+                    // YENİ: Yanlışsa açıklamayı göster
+                    expDiv.innerHTML = `<strong>Пояснення:</strong> ${explanation}`; // Açıklamayı göster
+                    expDiv.style.color = '#f1c40f'; // Açıklama sarı olsun
+                    expDiv.style.display = 'block';
+                }
+            });
+            
+            aiQuizResult.innerHTML = `Your Score: <span style="color: #f1c40f;">${score} / ${aiQuizCorrectAnswers.length}</span>`;
+            aiQuizResult.style.display = 'block';
+            document.getElementById('ai-check-button').style.display = 'none'; // Butonu gizle
+            
+            // Tekrar deneme butonu
+             aiQuizDisplayArea.innerHTML += `<button id="ai-reset-button" style="background-color: #00ffff; color: #0a0a1a; margin-top: 20px;">Try Another Topic</button>`;
+             document.getElementById('ai-reset-button').onclick = () => {
+                 aiQuizDisplayArea.style.display = 'none';
+                 aiQuizResult.style.display = 'none';
+                 aiTopicInput.value = '';
+                 aiQuizSetup.style.display = 'block';
+             };
+        }
+        
     </script>
 </body>
 </html>
