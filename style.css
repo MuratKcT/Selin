@@ -4,105 +4,123 @@ body {
     line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: #eef1f5; /* Açık gri/mavi arka plan */
-    color: #333;
+    background-color: #2c3e50; /* Koyu Pastel Zemin */
+    color: #ecf0f1; /* Açık Pastel Yazı Rengi */
+    transition: background-color 0.5s;
 }
 
-/* Başlık Alanı */
+/* Başlık Alanı (Header) */
 header {
-    background: #50b3a2; /* Turkuaz tonu */
-    color: white;
+    background: #34495e; /* Daha Koyu Başlık */
+    color: #ecf0f1;
     padding: 2rem 0;
     text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 header h1 {
     margin: 0;
     font-size: 2.5rem;
 }
 
-/* Ana İçerik Alanı */
+/* Ana İçerik Alanı (Quizleri Ortala ve Yan Yana Düzenle) */
 main {
-    padding: 20px;
-    max-width: 1200px; /* Daha geniş alan */
-    margin: 30px auto;
-    display: flex; /* Quizleri yan yana getirmek için esnek kutu düzeni */
-    gap: 30px; /* Quizler arası boşluk */
-    flex-wrap: wrap; /* Küçük ekranlarda alt alta düşürmek için */
+    padding: 30px 20px;
+    max-width: 1200px;
+    margin: 40px auto; /* Sayfayı ortalama */
+    display: flex; /* Yan yana düzenleme */
+    gap: 30px; 
+    flex-wrap: wrap; 
+    justify-content: center; /* Ortaya hizalama */
 }
 
 /* Quiz Konteyner Stil (Hem Çarpma hem de Fiil için) */
 #quiz-container, #irregular-verb-quiz-container {
-    flex: 1; /* Alıştırmaların eşit genişlikte yer kaplaması */
-    min-width: 300px; /* En az genişlik */
+    flex: 1;
+    min-width: 350px; /* Daha belirgin genişlik */
+    max-width: 550px;
     padding: 30px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Hafif gölge */
-    border-top: 5px solid #50b3a2; /* Üstte renkli çizgi */
+    background: #3a5369; /* Koyu zemine uyumlu quiz kutusu rengi */
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); 
+    border-top: 5px solid #1abc9c; /* Vurgu Rengi (Zümrüt Yeşili) */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeIn 1s ease-out; /* Giriş Animasyonu */
 }
 
-/* Başlıklar */
+/* Hover Animasyonu */
+#quiz-container:hover, #irregular-verb-quiz-container:hover {
+    transform: translateY(-5px); /* Hafif yukarı kalkma efekti */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+}
+
+/* Başlıklar ve Metinler */
 h2 {
-    color: #3f796d; /* Koyu turkuaz */
-    border-bottom: 2px solid #e0e0e0;
-    padding-bottom: 10px;
+    color: #1abc9c; /* Vurgulu Yeşil Başlık */
+    border-bottom: 2px solid rgba(236, 240, 241, 0.2);
+    padding-bottom: 15px;
     margin-top: 0;
+}
+p, span {
+    color: #ecf0f1; /* Açık pastel metin */
+}
+#question, #verb-base-form {
+    color: #f1c40f; /* Parlak Sarı (Soru Vurgusu) */
+    font-size: 1.7rem !important;
 }
 
 /* Giriş Kutuları */
 input[type="number"], input[type="text"] {
-    width: calc(100% - 22px);
-    padding: 10px;
-    margin-top: 5px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 1rem;
+    background-color: #ecf0f1; /* Açık renk giriş kutusu */
+    color: #333;
 }
 
 /* Butonlar */
 button {
-    background-color: #50b3a2;
+    background-color: #1abc9c; /* Zümrüt Yeşili Buton */
     color: white;
-    padding: 10px 20px;
+    padding: 12px 25px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease, transform 0.1s;
 }
 button:hover {
-    background-color: #3f796d;
+    background-color: #16a085; /* Daha koyu yeşil */
+    transform: scale(1.02);
 }
 button:disabled {
-    background-color: #cccccc;
+    background-color: #7f8c8d;
     cursor: not-allowed;
 }
 
 /* Geri Bildirim ve Puan Alanı */
-#feedback, #verb-feedback {
-    min-height: 20px; /* Mesaj gelmediğinde boş kalmaması için */
-}
-
-#score-container, #verb-score-container {
-    margin-top: 25px;
-    padding-top: 15px;
-    border-top: 1px dashed #e0e0e0;
-}
 #score, #verb-score {
     font-weight: bold;
-    color: #e84a5f; /* Vurgu rengi */
+    color: #e74c3c; /* Kırmızımsı (Vurgu) */
+}
+
+/* Animasyon Tanımı */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Footer */
 footer {
     text-align: center;
-    padding: 15px 0;
-    color: #777;
+    padding: 20px 0;
+    color: #bdc3c7;
     font-size: 0.9rem;
-    border-top: 1px solid #ddd;
-    background-color: white;
-    margin-top: 20px;
+    border-top: 1px solid #34495e;
+    background-color: #2c3e50;
+    margin-top: 30px;
 }
