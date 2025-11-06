@@ -112,7 +112,7 @@
         }
 
         /* Giriş Kutuları */
-        input[type="number"], input[type="text"] {
+        input[type="number"], input[type="text"], input[type="password"] {
             width: 100%;
             padding: 12px;
             margin-top: 8px;
@@ -199,6 +199,8 @@
         #reports-list {
             list-style: none;
             padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
         }
         #reports-list li {
             background: #3a5369;
@@ -274,17 +276,23 @@
         <p>&copy; 2025 Selin's Educational Platform</p>
     </footer>
 
-    <!-- Ebeveyn Kontrol Paneli Modalı -->
+    <!-- Ebeveyn Kontrol Paneli Modalı (Yeniden Düzenlendi) -->
     <div id="parent-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
             <h2 style="color: #e74c3c;">Parent Dashboard</h2>
+            
+            <!-- Hata/Geri Bildirim Mesajı (Her zaman görünür) -->
+            <p id="pin-feedback" style="color: #f1c40f; font-weight: bold; min-height: 20px;"></p>
+
+            <!-- PIN Giriş Alanı (Gerektiğinde gizlenir) -->
             <div id="auth-area">
                 <p>Enter PIN to access reports (PIN: 1234):</p>
                 <input type="password" id="parent-pin-input" placeholder="PIN Code">
                 <button id="pin-submit-button" style="background-color: #e74c3c;">Access</button>
-                <p id="pin-feedback" style="color: #f1c40f;"></p>
             </div>
+
+            <!-- Rapor Alanı (Başlangıçta gizli) -->
             <div id="reports-area" style="display: none;">
                 <h3 style="color: #1abc9c;">Selin's Progress Reports</h3>
                 <ul id="reports-list">
@@ -311,7 +319,7 @@
         let isAuthReady = false;
         
         // İlgili değişkenler var olduğu sürece Firebase'in kullanıma hazır olduğunu varsayıyoruz (Canvas ortamı)
-        let isFirebaseAvailable = !!firebaseConfig;
+        let isFirebaseAvailable = !!firebaseConfig && !!window.initializeApp;
 
         // Firebase'i Başlatma ve Kimlik Doğrulama
         if (isFirebaseAvailable) {
@@ -333,25 +341,22 @@
                             await window.signInAnonymously(auth);
                         }
                     }
-                    isAuthReady = true;
+                    isAuthReady = true; // Kimlik doğrulama tamamlandı
                 });
             } catch (e) {
                 console.error("Firebase initialization failed:", e);
-                isFirebaseAvailable = false; // Başlatma hatası durumunda da kullanılamaz olarak işaretle
+                isFirebaseAvailable = false; 
             }
         } else {
-            // Harici ortamda çalışırken alınan hatayı engeller ve yalnızca uyarı verir.
+            // Harici ortamda çalışırken (GitHub Pages)
             console.warn("Firebase: Canvas yapılandırma değişkenleri eksik. İlerleme kayıtları tutulmayacak.");
         }
 
         // Sonuçları Firestore'a Kaydetme Fonksiyonu
         async function saveQuizResult(quizType, score, total, isCorrect, detail) {
-            if (!isFirebaseAvailable) {
-                console.warn(`Veritabanı bağlantısı yok. Sonuç kaydedilemedi: ${quizType}`);
-                return;
-            }
-            if (!isAuthReady || !db) {
-                console.error("Firebase not ready or DB not initialized. Cannot save data.");
+            if (!isFirebaseAvailable || !isAuthReady || !db) {
+                // Veritabanı hazır değilse veya yoksa kaydetme
+                console.warn(`Veritabanı hazır değil. Sonuç kaydedilemedi: ${quizType}`);
                 return;
             }
 
@@ -372,17 +377,16 @@
                 console.log(`Result saved for ${quizType}.`);
             } catch (e) {
                 console.error("Error saving document:", e);
-                console.error(`Error: Could not save result for ${quizType}. Please check console.`);
             }
         }
 
         // =======================================
-        // Parent Dashboard Logic (Güncellendi)
+        // Parent Dashboard Logic (Yeniden Düzenlendi)
         // =======================================
 
         const parentModal = document.getElementById('parent-modal');
         const parentAccessButton = document.getElementById('parent-access-button');
-        const closeButton = document.querySelector('.close-button');
+        const closeButton = parentModal.querySelector('.close-button');
         const pinSubmitButton = document.getElementById('pin-submit-button');
         const parentPinInput = document.getElementById('parent-pin-input');
         const pinFeedback = document.getElementById('pin-feedback');
@@ -393,29 +397,27 @@
         const CORRECT_PIN = "1234"; // Ebeveyn PIN kodu
 
         parentAccessButton.onclick = () => {
-            // isFirebaseAvailable kontrolünü burada yapıyoruz
+            // Modalın içini her açılışta sıfırla
+            reportsArea.style.display = 'none'; // Raporları gizle
+            parentPinInput.value = ''; // PIN girişini temizle
+            
+            parentModal.style.display = 'flex'; // Modalı göster
+
             if (!isFirebaseAvailable) {
-                // Tarayıcı alert'i yerine CSS modalı/pop-up kullanıyoruz (uygulama kuralı)
-                pinFeedback.textContent = "Veritabanı bağlantısı yok. Raporlar kullanılamıyor.";
-                pinFeedback.style.color = '#e74c3c';
-                parentModal.style.display = 'flex';
-                // Giriş alanını gizle, sadece hata mesajını göster
-                document.getElementById('auth-area').style.display = 'none';
-                return;
+                // Firebase yoksa (GitHub Pages'teyiz)
+                pinFeedback.textContent = "Veritabanı bağlantısı yok. Raporlar bu ortamda kullanılamıyor.";
+                pinFeedback.style.color = '#e74c3c'; // Kırmızı hata
+                authArea.style.display = 'none'; // PIN girişini gizle
+            } else {
+                // Firebase varsa (Canvas'tayız)
+                pinFeedback.textContent = "Enter PIN to access reports (PIN: 1234):";
+                pinFeedback.style.color = '#f1c40f'; // Sarı bilgi
+                authArea.style.display = 'block'; // PIN girişini göster
             }
-            // Canvas önizlemesinde PIN girişi ile modalı açar
-            parentModal.style.display = 'flex';
-            document.getElementById('auth-area').style.display = 'block'; // Giriş alanını göster
-            document.getElementById('reports-area').style.display = 'none'; // Raporları gizle
         };
 
         closeButton.onclick = () => {
             parentModal.style.display = 'none';
-            // Paneli sıfırla
-            authArea.style.display = 'block';
-            reportsArea.style.display = 'none';
-            pinFeedback.textContent = '';
-            parentPinInput.value = '';
         };
 
         window.onclick = (event) => {
@@ -430,27 +432,27 @@
                 
                 // PIN doğru, şimdi Firebase hazır mı kontrol et.
                 if (!isAuthReady || !db) {
-                     pinFeedback.textContent = 'PIN doğru, ancak güvenli bağlantı bekleniyor. Lütfen 5 saniye sonra tekrar deneyin.';
+                     pinFeedback.textContent = 'PIN doğru, ancak güvenli bağlantı bekleniyor. Lütfen 3 saniye sonra tekrar deneyin.';
                      pinFeedback.style.color = '#f1c40f'; // Sarı uyarı
                      
-                     // 5 saniye bekleme, sonra tekrar deneme mantığı
+                     // 3 saniye bekleme, sonra tekrar deneme mantığı
                      setTimeout(() => {
-                         if (!isAuthReady) {
-                             pinFeedback.textContent = 'Bağlantı kurulamadı. Lütfen sayfayı yenileyin.';
-                         } else {
-                             // Bağlantı kurulduysa raporları çek
-                             // pinSubmitButton.onclick(); // Kendini tekrar çağırmak yerine, doğrudan rapor alanını açalım
-                             pinFeedback.textContent = 'Erişim izni verildi!';
+                         if (isAuthReady) {
+                             pinFeedback.textContent = 'Bağlantı kuruldu! Raporlar getiriliyor...';
                              pinFeedback.style.color = '#1abc9c';
                              authArea.style.display = 'none';
                              reportsArea.style.display = 'block';
                              fetchReports();
+                         } else {
+                             pinFeedback.textContent = 'Bağlantı kurulamadı. Lütfen modalı kapatıp tekrar açın.';
+                             pinFeedback.style.color = '#e74c3c';
                          }
-                     }, 5000);
+                     }, 3000); // 3 saniye bekleme
                      return;
                 }
 
-                pinFeedback.textContent = 'Erişim izni verildi!';
+                // Zaten hazırsa (örn. ikinci deneme)
+                pinFeedback.textContent = 'Erişim izni verildi! Raporlar getiriliyor...';
                 pinFeedback.style.color = '#1abc9c';
                 authArea.style.display = 'none';
                 reportsArea.style.display = 'block';
@@ -471,7 +473,8 @@
             reportsList.innerHTML = '<li>Sonuçlar getiriliyor...</li>';
 
             const path = `artifacts/${appId}/users/${userId}/quiz_results`;
-            const resultsQuery = window.query(window.collection(db, path));
+            // NOT: orderBy('timestamp', 'desc') ekleyebiliriz ama indeks gerektirebilir. Şimdilik basit tutalım.
+            const resultsQuery = window.query(window.collection(db, path)); 
             
             // onSnapshot ile gerçek zamanlı dinleme
             window.onSnapshot(resultsQuery, (snapshot) => {
@@ -481,15 +484,19 @@
                     return;
                 }
                 
-                snapshot.docs.forEach(doc => {
-                    const data = doc.data();
+                // Verileri önce bir diziye alıp tersine çevirerek en yeniyi üste alalım
+                const docs = snapshot.docs.map(doc => doc.data());
+                // Timestamp'e göre sırala (en yeni üstte)
+                docs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+                docs.forEach(data => {
                     const li = document.createElement('li');
                     
                     const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString('tr-TR') : 'Mevcut Değil';
                     
                     li.innerHTML = `
                         <strong>${data.quizType}</strong> - ${time}<br>
-                        Sonuç: ${data.isCorrect ? 'Doğru' : 'Yanlış'} (Soru ${data.totalQuestions})<br>
+                        Sonuç: ${data.isCorrect ? '<span style="color: #1abc9c;">Doğru</span>' : '<span style="color: #e74c3c;">Yanlış</span>'} (Soru ${data.totalQuestions})<br>
                         Detay: ${data.detail}
                     `;
                     reportsList.appendChild(li);
