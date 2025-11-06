@@ -7,79 +7,88 @@
     <!-- Artık Firebase kütüphanelerine gerek yok -->
     <style>
         /* ======================================= */
-        /* CSS (Stil) - Dark Pastel Theme & Centering */
+        /* CSS (Stil) - UZAY TEMASI (Yükseltilmiş) */
         /* ======================================= */
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            /* Koyu, siyaha yakın pastel zemin */
-            background-color: #1c2833; 
+            /* Koyu uzay mavisi zemin */
+            background-color: #0a0a1a; 
             color: #ecf0f1; 
-            transition: background-color 0.5s;
+            
+            /* Statik yıldızlar için basit gradient */
+            background-image: 
+                radial-gradient(rgba(255,255,255,0.8) 0.5px, transparent 0.5px),
+                radial-gradient(rgba(255,255,255,0.6) 0.5px, transparent 0.5px);
+            background-size: 30px 30px, 90px 90px;
+            /* Başlangıç pozisyonu JS tarafından ayarlanacak */
+
             min-height: 100vh; 
-            display: flex; /* Dikey ortalama için flexbox başlatılır */
-            flex-direction: column; /* İçerikleri dikey yığar */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Kaydırma çubuklarını gizle (paralaks için) */
         }
         
         /* Başlık Alanı (Header) */
         header {
-            background: #212f3c; 
-            color: #ecf0f1;
+            background: rgba(0, 0, 0, 0.3); /* Yarı şeffaf */
+            color: #00ffff; /* Neon Mavi (Cyan) */
             padding: 2rem 0;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid #00ffff;
+            text-shadow: 0 0 5px #00ffff;
         }
         header h1 {
             margin: 0;
             font-size: 2.5rem;
         }
 
-        /* Ana İçerik Alanı (Quizleri Hem Yatayda Hem Dikeyde ORTALA) */
+        /* Ana İçerik Alanı (Quizleri Ortala) */
         main {
-            flex-grow: 1; /* Geriye kalan tüm dikey alanı kapla */
+            flex-grow: 1;
             padding: 30px 20px;
             max-width: 1200px;
             width: 100%; 
             margin: 0 auto; 
-            
-            /* Dikey ortalama ayarları */
             display: flex; 
             gap: 30px; 
             flex-wrap: wrap; 
-            justify-content: center; /* Yatayda ortalama */
-            align-items: center; /* Dikeyde ortalama */
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Quiz Konteyner Stil (Yan Yana Gelen Kutular) */
+        /* Quiz Konteyner Stil (Uzay Gemisi Paneli) */
         #quiz-container, #irregular-verb-quiz-container {
-            flex: 1 1 45%; /* Yan yana gelmeyi garanti eder, minimum %45 genişlik */
+            flex: 1 1 45%; 
             min-width: 350px; 
             max-width: 550px;
             padding: 30px;
-            background: #2c3e50; 
+            background: rgba(28, 40, 51, 0.85); /* Koyu panel rengi (yarı şeffaf) */
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); 
-            border-top: 5px solid #1abc9c; 
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.3); /* Neon mavi parlama */
+            border: 1px solid #00ffff;
+            border-top: 5px solid #00ffff; 
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             animation: fadeIn 1s ease-out; 
-            margin: 10px; /* Her kutu etrafında biraz boşluk bırakır */
+            margin: 10px;
         }
 
         /* Hover Animasyonu */
         #quiz-container:hover, #irregular-verb-quiz-container:hover {
             transform: translateY(-5px); 
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 0 35px rgba(0, 255, 255, 0.6);
         }
 
         /* Başlıklar ve Metinler */
         h2 {
-            color: #1abc9c; 
-            /* Kutunun tüm genişliğini kullanmasını sağlar */
+            color: #00ffff; /* Neon Mavi */
+            text-shadow: 0 0 3px #00ffff;
             width: 100%; 
             box-sizing: border-box; 
-            border-bottom: 2px solid rgba(236, 240, 241, 0.1); 
+            border-bottom: 2px solid rgba(0, 255, 255, 0.2); 
             padding-bottom: 15px;
             margin-top: 0;
         }
@@ -87,48 +96,65 @@
             color: #ecf0f1; 
         }
         #question, #verb-base-form {
-            color: #f1c40f; 
+            color: #f1c40f; /* Parlak Sarı (Soru Vurgusu) */
             font-size: 1.7rem !important;
+            text-shadow: 0 0 5px #f1c40f;
         }
 
-        /* Giriş Kutuları */
+        /* Giriş Kutuları (YENİ ANIMASYON) */
         input[type="number"], input[type="text"], input[type="password"] {
             width: 100%;
             padding: 12px;
             margin-top: 8px;
             margin-bottom: 15px;
-            border: none;
+            border: 1px solid #00ffff;
             border-radius: 6px;
             box-sizing: border-box;
             font-size: 1rem;
             background-color: #ecf0f1; 
             color: #333;
+            /* Animasyon için geçiş eklendi */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
+
+        /* Giriş Kutusu Odaklanma Animasyonu (YENİ) */
+        input[type="number"]:focus, input[type="text"]:focus, input[type="password"]:focus {
+            background-color: #fff;
+            border-color: #f1c40f; /* Odaklanınca sarı sınır */
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.7); /* Sarı parlama */
+            transform: scale(1.02); /* Hafifçe büyüt */
+            outline: none; /* Varsayılan tarayıcı çerçevesini kaldır */
+        }
+
 
         /* Butonlar */
         button {
-            background-color: #1abc9c; 
-            color: white;
+            background-color: #00ffff; /* Neon Mavi */
+            color: #0a0a1a; /* Koyu zemin rengi */
             padding: 12px 25px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 1.1rem;
-            transition: background-color 0.3s ease, transform 0.1s;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.1s, box-shadow 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
         button:hover {
-            background-color: #16a085; 
+            background-color: #ffffff; /* Beyaz */
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
             transform: scale(1.02);
         }
         button:disabled {
             background-color: #7f8c8d;
+            box-shadow: none;
             cursor: not-allowed;
         }
 
         /* Geri Bildirim ve Puan Alanı */
         #score, #verb-score {
             font-weight: bold;
-            color: #e74c3c; 
+            color: #e74c3c; /* Kırmızı (vurgu) */
         }
 
         /* Animasyon Tanımı */
@@ -137,7 +163,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Ebeveyn Paneli Modalı */
+        /* Ebeveyn Paneli Modalı (Uzay Teması) */
         .modal {
             position: fixed;
             z-index: 10;
@@ -147,7 +173,7 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.8);
-            display: none; /* Varsayılan olarak gizli */
+            display: none;
             justify-content: center;
             align-items: center;
         }
@@ -157,7 +183,8 @@
             border-radius: 10px;
             width: 80%;
             max-width: 600px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 25px rgba(231, 76, 60, 0.5); /* Kırmızı parlama */
+            border: 1px solid #e74c3c;
             border-top: 5px solid #e74c3c;
             animation: slideIn 0.5s ease-out;
         }
@@ -190,15 +217,15 @@
             font-size: 0.9rem;
             color: #bdc3c7;
         }
-
+        
         /* Footer */
         footer {
             text-align: center;
             padding: 20px 0;
             color: #bdc3c7;
             font-size: 0.9rem;
-            border-top: 1px solid #34495e;
-            background-color: #212f3c; 
+            border-top: 1px solid #00ffff;
+            background: rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -249,7 +276,7 @@
         </div>
         
         <!-- Parent Access Button -->
-        <button id="parent-access-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 5; background-color: #e74c3c; color: white;">Parent Access</button>
+        <button id="parent-access-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 5; background-color: #e74c3c; color: white; box-shadow: 0 0 10px rgba(231, 76, 60, 0.7);">Before You Run Away...</button>
     </main>
 
     <footer>
@@ -260,7 +287,8 @@
     <div id="parent-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <h2 style="color: #e74c3c;">Parent Dashboard</h2>
+            <!-- Başlığı burada değiştiriyoruz -->
+            <h2 style="color: #e74c3c;">Before You Run Away...</h2>
             
             <!-- Hata/Geri Bildirim Mesajı (Her zaman görünür) -->
             <p id="pin-feedback" style="color: #f1c40f; font-weight: bold; min-height: 20px;"></p>
@@ -285,7 +313,27 @@
 
     <script>
         // =======================================
-        // LocalStorage (Tarayıcı Hafızası) Ebeveyn Kontrolü
+        // 1. Mouse-Sensitive Starfield Background (YENİ)
+        // =======================================
+        window.addEventListener('mousemove', function(e) {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
+            // İki yıldız katmanını farklı hızlarda hareket ettir
+            // Hız 1 (Daha hızlı katman)
+            const bgPosX1 = -(mouseX / 30);
+            const bgPosY1 = -(mouseY / 30);
+            
+            // Hız 2 (Daha yavaş katman)
+            const bgPosX2 = -(mouseX / 60);
+            const bgPosY2 = -(mouseY / 60);
+            
+            document.body.style.backgroundPosition = `${bgPosX1}px ${bgPosY1}px, ${bgPosX2}px ${bgPosY2}px`;
+        });
+
+
+        // =======================================
+        // 2. LocalStorage (Tarayıcı Hafızası) Ebeveyn Kontrolü
         // =======================================
 
         // Sonuçları LocalStorage'a Kaydetme Fonksiyonu
@@ -475,12 +523,12 @@
                 currentScore++;
                 scoreEl.textContent = currentScore;
                 feedbackEl.textContent = 'CORRECT! You are great.';
-                feedbackEl.style.color = '#1abc9c'; // Green
+                feedbackEl.style.color = '#1abc9c'; // DÜZELTME: : yerine =
                 submitButton.disabled = true;
                 setTimeout(generateNewQuestion, 1000);
             } else {
                 feedbackEl.textContent = 'WRONG! Try again.';
-                feedbackEl.style.color = '#e74c3c'; // Red
+                feedbackEl.style.color = '#e74c3c'; // DÜZELTME: : yerine =
             }
 
             // SONUCU KAYDETME (LocalStorage'a)
@@ -594,12 +642,12 @@
                 currentVerbScore++;
                 verbScoreEl.textContent = currentVerbScore;
                 feedbackMessage = 'PERFECT! Both forms are correct.';
-                verbFeedbackEl.style.color = '#1abc9c'; 
+                verbFeedbackEl.style.color = '#1abc9c'; // DÜZELTME: : yerine =
                 isCorrect = true;
             } else {
                 feedbackMessage = 'WRONG! The correct forms are: ';
                 feedbackMessage += `V2: ${currentVerb.v2}, V3: ${currentVerb.v3}.`;
-                verbFeedbackEl.style.color = '#e74c3c'; 
+                verbFeedbackEl.style.color = '#e74c3c'; // DÜZELTME: : yerine =
                 isCorrect = false;
             }
 
