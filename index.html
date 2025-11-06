@@ -538,8 +538,21 @@
         async function callGeminiAPI(userPrompt, systemInstructionText = null, useGrounding = false) {
             showGeminiModal("✨ AI Assistant is thinking...");
             
-            const apiKey = ""; // API anahtarını boş bırakın, Canvas ortamı sağlar
+            // GÜNCELLEME: Sizin API anahtarınız eklendi
+            const YOUR_API_KEY = "AIzaSyCi4V_K9kfGM2BU-DzF2uWG1mYlYyX17I4"; 
+            
+            // Canvas ortamı anahtarını (varsa) kullan, yoksa sizin anahtarınızı kullan
+            // (Canvas'ın `__GEMINI_API_KEY__` değişkenini kullandığını varsayıyoruz, yoksa sizinkini kullanır)
+            const apiKey = (typeof __GEMINI_API_KEY__ !== 'undefined' && __GEMINI_API_KEY__ !== "") ? __GEMINI_API_KEY__ : YOUR_API_KEY;
+            
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            // API anahtarı yoksa hata ver (GitHub'da unutulursa)
+            if (!apiKey) {
+                // Ukraynaca hata mesajı
+                updateGeminiModal("Помилка: API-ключ не налаштовано. AI-функції вимкнено.");
+                return;
+            }
 
             let payload = {
                 contents: [{ parts: [{ text: userPrompt }] }],
