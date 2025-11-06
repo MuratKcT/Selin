@@ -10,7 +10,27 @@
     <header>
         <h1>Hello Selin!</h1>
     </header>
-
+<div id="irregular-verb-quiz-container" style="margin-top: 40px;">
+        <h2>English Exercise: Irregular Verbs</h2>
+        
+        <div id="verb-question-area">
+            <p id="verb-base-form" style="font-size: 1.5rem; font-weight: bold;">Loading verb...</p>
+            
+            <p>Simple Past (V2):</p>
+            <input type="text" id="verb-v2-input" placeholder="V2 form">
+            
+            <p>Past Participle (V3):</p>
+            <input type="text" id="verb-v3-input" placeholder="V3 form">
+            
+            <button id="verb-submit-button">Check Verb</button>
+            
+            <p id="verb-feedback" style="margin-top: 15px; font-weight: bold;"></p>
+        </div>
+        
+        <div id="verb-score-container" style="margin-top: 20px;">
+            <p>Score: <span id="verb-score">0</span> / <span id="verb-total-questions">0</span></p>
+        </div>
+    </div>
     <main>
         <h2>Math Exercise: Multiplication</h2>
         
