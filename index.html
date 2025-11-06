@@ -1,22 +1,37 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selin'in Ders Sitesi</title>
+    <title>Selin's Study Site</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>Merhaba Selin!</h1>
+        <h1>Hello Selin!</h1>
     </header>
 
     <main>
-        <p>Alıştırmaların yakında burada olacak!</p>
-        </main>
+        <h2>Math Exercise: Multiplication</h2>
+        
+        <div id="quiz-container">
+            
+            <p id="question" style="font-size: 1.5rem; font-weight: bold;">Loading question...</p>
+            
+            <input type="number" id="answer-input" placeholder="Enter your answer">
+            
+            <button id="submit-button">Check</button>
+            
+            <p id="feedback" style="margin-top: 15px; font-weight: bold;"></p>
+        </div>
+
+        <div id="score-container" style="margin-top: 20px;">
+            <p>Score: <span id="score">0</span> / <span id="total-questions">10</span></p>
+        </div>
+    </main>
 
     <footer>
-        <p>&copy; 2025 Selin'in Eğitim Platformu</p>
+        <p>&copy; 2025 Selin's Educational Platform</p>
     </footer>
 
     <script src="script.js"></script>
