@@ -474,6 +474,8 @@
 
             <!-- GÜNCELLEME: PIN ekranı düzeltildi (çift yazı kaldırıldı) -->
             <div id="auth-area">
+                <!-- GÜNCELLEME: PIN istemi İngilizce oldu -->
+                <p style="color: #f1c40f;">Enter PIN (Hint: 3355):</p>
                 <input type="password" id="parent-pin-input" placeholder="PIN Code">
                 <button id="pin-submit-button" style="background-color: #e74c3c;">Access</button>
             </div>
@@ -493,6 +495,7 @@
     <div id="gemini-modal" class="modal">
         <div class="modal-content gemini-modal-content">
             <span class="close-button gemini-close-button">&times;</span>
+            <!-- GÜNCELLEME: Yükleme metni değişti (JS'de) -->
             <h2 id="gemini-modal-title" style="color: #f1c40f;">✨ AI Assistant</h2>
             
             <div id="gemini-loading-spinner" style="display: none; text-align: center; margin-top: 20px;">
@@ -519,9 +522,9 @@
                 const mouseX = e.clientX;
                 const mouseY = e.clientY;
                 
-                // Hareketi yavaşlat
-                const bgPosX = -(mouseX / 100);
-                const bgPosY = -(mouseY / 100);
+                // GÜNCELLEME: Hissiyat %60 artırıldı (100 -> 60)
+                const bgPosX = -(mouseX / 60);
+                const bgPosY = -(mouseY / 60);
                 
                 document.body.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
             }
@@ -533,17 +536,30 @@
         function handleOrientation(event) {
             // beta: (tilt front-to-back)
             // gamma: (tilt left-to-right)
-            const beta = event.beta;  
-            const gamma = event.gamma; 
+            let beta = event.beta;  
+            let gamma = event.gamma; 
             
             if (beta === null || gamma === null) return;
 
-            // Hassasiyeti ayarla (düşük sayı = daha yavaş hareket)
-            const sensitivity = 8;
+            // GÜNCELLEME: Cihazın yönünü (dikey/yatay) kontrol et
+            const orientation = screen.orientation.type;
+            let bgPosX, bgPosY;
             
-            // Cihazın normal duruşuna göre ayarla
-            const bgPosX = -(gamma / sensitivity);
-            const bgPosY = -(beta / sensitivity);
+            // GÜNCELLEME: Hissiyat %60 artırıldı (8 -> 5)
+            const sensitivity = 5;
+            
+            if (orientation.startsWith('landscape')) {
+                // YATAY (Landscape) Mod
+                // Eksenler değişir: beta (normalde ön/arka) artık sağ/sol tilt olur
+                bgPosX = -(beta / sensitivity);
+                // gamma (normalde sağ/sol) artık ön/arka tilt olur
+                bgPosY = -(gamma / sensitivity);
+            } else {
+                // DİKEY (Portrait) Mod
+                // Standart atama
+                bgPosX = -(gamma / sensitivity);
+                bgPosY = -(beta / sensitivity);
+            }
 
             document.body.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
         }
