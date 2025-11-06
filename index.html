@@ -153,6 +153,21 @@
             box-shadow: none;
             cursor: not-allowed;
         }
+        
+        /* GÜNCELLEME: Hata düzeltme butonları için stil */
+        #gemini-example-button, #next-verb-button {
+            display: none; /* İkisi de başlangıçta gizli */
+            color: #0a0a1a; 
+            margin-top: 10px;
+        }
+        #gemini-example-button {
+            background-color: #f1c40f; /* Sarı AI butonu */
+        }
+        #next-verb-button {
+            background-color: #1abc9c; /* Yeşil Sonraki butonu */
+            margin-left: 10px; /* Aralarında boşluk */
+        }
+
 
         /* Geri Bildirim ve Puan Alanı */
         #score, #verb-score {
@@ -288,10 +303,12 @@
                 
                 <button id="verb-submit-button">Check Verb</button>
                 
+                <!-- GÜNCELLEME: Hata düzeltme butonları eklendi -->
+                <button id="gemini-example-button">✨ Show Example Sentence</button>
+                <button id="next-verb-button">Next Verb &rarr;</button>
+                
                 <p id="verb-feedback" style="margin-top: 15px; font-weight: bold;"></p>
                 
-                <!-- === YENİ: Gemini Örnek Cümle Butonu === -->
-                <button id="gemini-example-button" style="display: none; background-color: #f1c40f; color: #0a0a1a; margin-top: 10px;">✨ Show Example Sentence</button>
             </div>
             
             <div id="verb-score-container" style="margin-top: 20px;">
@@ -550,6 +567,10 @@
                     });
 
                     if (!response.ok) {
+                        // GÜNCELLEME: 403 hatasını yakala
+                        if (response.status === 403) {
+                             throw new Error("API key is not valid or permissions are missing. (403 Forbidden)");
+                        }
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
@@ -571,7 +592,7 @@
                     retries--;
                     if (retries === 0) {
                         // Ukraynaca hata mesajı
-                        const errorMsg = `Помилка виклику AI: ${error.message}. Будь ласка, спробуйте пізніше.`;
+                        const errorMsg = `Помилка виклику AI: ${error.message}. Ця функція може не працювати поза платформою Canvas.`;
                         updateGeminiModal(errorMsg);
                         return errorMsg;
                     }
@@ -731,12 +752,15 @@
         const verbTotalQuestionsEl = document.getElementById('verb-total-questions');
         const irregularVerbQuizContainer = document.getElementById('irregular-verb-quiz-container');
         const geminiExampleButton = document.getElementById('gemini-example-button'); 
+        
+        // GÜNCELLEME: Yeni buton eklendi
+        const nextVerbButton = document.getElementById('next-verb-button');
 
         let currentVerbScore = 0;
         let currentVerbIndex = -1;
         const totalVerbQuestions = irregularVerbs.length;
         verbTotalQuestionsEl.textContent = totalVerbQuestions;
-        let currentVerbData = null; // Mevcut fiili saklamak için (YENİ EKLENDİ)
+        let currentVerbData = null; 
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -759,21 +783,25 @@
                 return;
             }
 
-            currentVerbData = shuffledVerbs[currentVerbIndex]; // Fiili sakla
+            currentVerbData = shuffledVerbs[currentVerbIndex]; 
             verbBaseFormEl.textContent = `Verb Base Form (V1): ${currentVerbData.v1}`;
             
             verbV2Input.value = '';
             verbV3Input.value = '';
             verbFeedbackEl.textContent = '';
             verbSubmitButton.disabled = false;
-            geminiExampleButton.style.display = 'none'; // Gemini butonunu gizle
+            
+            // GÜNCELLEME: Butonları gizle
+            geminiExampleButton.style.display = 'none'; 
+            nextVerbButton.style.display = 'none';
+            
             verbV2Input.focus();
         }
 
         async function checkVerbAnswer() {
             if (verbSubmitButton.disabled) return;
 
-            const currentVerb = currentVerbData; // Saklanan fiili kullan
+            const currentVerb = currentVerbData; 
             const userAnswerV2 = verbV2Input.value.trim().toLowerCase();
             const userAnswerV3 = verbV3Input.value.trim().toLowerCase();
             
@@ -793,19 +821,23 @@
                 feedbackMessage = 'PERFECT! Both forms are correct.';
                 verbFeedbackEl.style.color = '#1abc9c';
                 isCorrect = true;
-                geminiExampleButton.style.display = 'none'; 
+                
+                // GÜNCELLEME: Doğruysa otomatik geç
+                setTimeout(generateNewVerbQuestion, 2000);
             } else {
                 feedbackMessage = 'WRONG! The correct forms are: ';
                 feedbackMessage += `V2: ${currentVerb.v2}, V3: ${currentVerb.v3}.`;
                 verbFeedbackEl.style.color = '#e74c3c';
                 isCorrect = false;
-                geminiExampleButton.style.display = 'block'; // Hata yapınca butonu göster (YENİ EKLENDİ)
+                
+                // GÜNCELLEME: Yanlışsa butonları göster
+                geminiExampleButton.style.display = 'inline-block'; 
+                nextVerbButton.style.display = 'inline-block'; 
             }
 
             verbFeedbackEl.textContent = feedbackMessage;
             verbSubmitButton.disabled = true;
 
-            // Raporu LocalStorage'a kaydet
             await saveQuizResult(
                 "Irregular Verbs", 
                 currentVerbScore, 
@@ -813,24 +845,17 @@
                 isCorrect, 
                 `V1: ${currentVerb.v1}, Your V2/V3: ${userAnswerV2}/${userAnswerV3}`
             );
-
-
-            if (isCorrect) {
-                setTimeout(generateNewVerbQuestion, 2000);
-            } else {
-                // Yanlış cevapta, Gemini butonunu görmesi için beklemeyi uzat
-                setTimeout(generateNewVerbQuestion, 3000);
-            }
         }
 
         verbSubmitButton.addEventListener('click', checkVerbAnswer);
         
-        // Gemini Örnek Cümle Butonu (YENİ EKLENDİ)
+        // GÜNCELLEME: Yeni butonun tıklama olayı
+        nextVerbButton.addEventListener('click', generateNewVerbQuestion);
+        
         geminiExampleButton.onclick = async () => {
             if (!currentVerbData) return;
 
             const verb = currentVerbData;
-            // Gemini'ye Ukraynaca cevap vermesini söyle
             const systemPrompt = "You are an English teacher. The user is a 10-year-old student. Write one, very simple example sentence for *each* of the 3 verb forms (V1, V2, V3). First show the sentence in English, then provide the **Ukrainian translation** on a new line. Format it clearly.";
             
             const simplePrompt = `Write 3 very simple example sentences for a 10-year-old using the verb "${verb.v1}".
