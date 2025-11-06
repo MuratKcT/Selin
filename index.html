@@ -221,7 +221,7 @@
             color: #bdc3c7;
         }
 
-        /* Gemini Modal Stili */
+        /* === YENİ: Gemini Modal Stili === */
         .modal-content.gemini-modal-content {
             border-top-color: #f1c40f; 
             border-color: #f1c40f;
@@ -269,7 +269,6 @@
 </head>
 <body>
     <header>
-        <!-- GÜNCELLEME 2: Başlık değişti -->
         <h1>Ahoy Captain Selin!</h1>
     </header>
 
@@ -291,6 +290,7 @@
                 
                 <p id="verb-feedback" style="margin-top: 15px; font-weight: bold;"></p>
                 
+                <!-- === YENİ: Gemini Örnek Cümle Butonu === -->
                 <button id="gemini-example-button" style="display: none; background-color: #f1c40f; color: #0a0a1a; margin-top: 10px;">✨ Show Example Sentence</button>
             </div>
             
@@ -317,7 +317,6 @@
         </div>
         
         <!-- Parent Access Button -->
-        <!-- GÜNCELLEME 3: Buton metni değişti -->
         <button id="parent-access-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 5; background-color: #e74c3c; color: white; box-shadow: 0 0 10px rgba(231, 76, 60, 0.7);">Galactic Points</button>
     </main>
 
@@ -329,13 +328,11 @@
     <div id="parent-modal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <!-- GÜNCELLEME 3: Panel başlığı değişti -->
             <h2 style="color: #e74c3c;">Galactic Points</h2>
             
             <p id="pin-feedback" style="color: #f1c40f; font-weight: bold; min-height: 20px;"></p>
 
             <div id="auth-area">
-                <!-- DİL DEĞİŞİKLİĞİ: Ukraynaca -->
                 <p>Введіть PIN для доступу до звітів (PIN: 1234):</p>
                 <input type="password" id="parent-pin-input" placeholder="PIN Code">
                 <button id="pin-submit-button" style="background-color: #e74c3c;">Access</button>
@@ -343,6 +340,7 @@
 
             <div id="reports-area" style="display: none;">
                 <h3 style="color: #1abc9c;">Selin's Progress Reports</h3>
+                <!-- === YENİ: Gemini Özet Butonu === -->
                 <button id="gemini-summary-button" style="background-color: #f1c40f; color: #0a0a1a; margin-bottom: 15px;">✨ Get AI Progress Summary</button>
                 <ul id="reports-list">
                     <li>Loading results...</li>
@@ -351,7 +349,7 @@
         </div>
     </div>
 
-    <!-- Gemini AI Modal -->
+    <!-- === YENİ: Gemini AI Modal === -->
     <div id="gemini-modal" class="modal">
         <div class="modal-content gemini-modal-content">
             <span class="close-button gemini-close-button">&times;</span>
@@ -377,7 +375,6 @@
             const mouseX = e.clientX;
             const mouseY = e.clientY;
             
-            // GÜNCELLEME 1: Paralaks hızı tek bir görsel için ayarlandı
             const bgPosX = -(mouseX / 50);
             const bgPosY = -(mouseY / 50);
             
@@ -431,7 +428,6 @@
             reportsArea.style.display = 'none';
             authArea.style.display = 'block';
             parentPinInput.value = '';
-            // DİL DEĞİŞİKLİĞİ: Ukraynaca
             pinFeedback.textContent = "Введіть PIN для доступу до звітів (PIN: 1234):";
             pinFeedback.style.color = '#f1c40f';
             parentModal.style.display = 'flex';
@@ -450,7 +446,6 @@
         pinSubmitButton.onclick = () => {
             const enteredPin = parentPinInput.value.trim();
             if (enteredPin === CORRECT_PIN) {
-                // DİL DEĞİŞİKLİĞİ: Ukraynaca
                 pinFeedback.textContent = 'Доступ надано! Отримання звітів...';
                 pinFeedback.style.color = '#1abc9c';
                 authArea.style.display = 'none';
@@ -458,33 +453,28 @@
                 geminiSummaryButton.style.display = 'block'; 
                 fetchReportsFromLocalStorage();
             } else {
-                // DİL DEĞİŞİKLİĞİ: Ukraynaca
                 pinFeedback.textContent = 'Неправильний PIN. Спробуйте ще раз.';
                 pinFeedback.style.color = '#e74c3c';
             }
         };
 
         function fetchReportsFromLocalStorage() {
-            // DİL DEĞİŞİKLİĞİ: Ukraynaca
             reportsList.innerHTML = '<li>Завантаження результатів...</li>';
             try {
                 const reports = JSON.parse(localStorage.getItem('selinQuizReports')) || [];
                 reportsList.innerHTML = '';
                 if (reports.length === 0) {
-                    // DİL DEĞİŞİKLİĞİ: Ukraynaca
                     reportsList.innerHTML = '<li>Ще немає збережених результатів вікторини.</li>';
                     return;
                 }
                 
                 reports.forEach(data => {
                     const li = document.createElement('li');
-                    // DİL DEĞİŞİKLİĞİ: Ukraynaca tarih formatı
                     const time = new Date(data.timestamp).toLocaleString('uk-UA', {
                         day: '2-digit', month: '2-digit', year: 'numeric', 
                         hour: '2-digit', minute: '2-digit'
                     });
                     
-                    // DİL DEĞİŞİKLİĞİ: Ukraynaca rapor metinleri
                     li.innerHTML = `
                         <strong>${data.quizType}</strong> - ${time}<br>
                         Результат: ${data.isCorrect ? '<span style="color: #1abc9c;">Правильно</span>' : '<span style="color: #e74c3c;">Неправильно</span>'} (Питання ${data.totalQuestions})<br>
@@ -499,7 +489,7 @@
         }
         
         // =======================================
-        // 4. Gemini API Fonksiyonları
+        // 4. Gemini API Fonksiyonları (YENİ EKLENDİ)
         // =======================================
 
         const geminiModal = document.getElementById('gemini-modal');
@@ -527,10 +517,11 @@
         
         geminiCloseButton.onclick = hideGeminiModal;
         
+        // Gemini API'yi çağıran ana fonksiyon
         async function callGeminiAPI(userPrompt, systemInstructionText = null, useGrounding = false) {
             showGeminiModal("✨ AI Assistant is thinking...");
             
-            const apiKey = ""; 
+            const apiKey = ""; // API anahtarını boş bırakın, Canvas ortamı sağlar
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             let payload = {
@@ -579,7 +570,7 @@
                     console.error("Gemini API call failed:", error);
                     retries--;
                     if (retries === 0) {
-                        // DİL DEĞİŞİKLİĞİ: Ukraynaca
+                        // Ukraynaca hata mesajı
                         const errorMsg = `Помилка виклику AI: ${error.message}. Будь ласка, спробуйте пізніше.`;
                         updateGeminiModal(errorMsg);
                         return errorMsg;
@@ -590,12 +581,13 @@
             }
         }
         
+        // Gemini Özet Butonu (YENİ EKLENDİ)
         geminiSummaryButton.onclick = async () => {
             try {
                 const reports = JSON.parse(localStorage.getItem('selinQuizReports')) || [];
                 if (reports.length === 0) {
                     showGeminiModal("✨ AI Summary");
-                    // DİL DEĞİŞİKLİĞİ: Ukraynaca
+                    // Ukraynaca mesaj
                     updateGeminiModal("Ще немає звітів для узагальнення. Селін повинна спочатку пройти декілька вікторин!");
                     return;
                 }
@@ -604,7 +596,7 @@
                     `Quiz: ${r.quizType}, Correct: ${r.isCorrect}, Detail: ${r.detail}`
                 ).slice(0, 20).join('\n'); 
 
-                // DİL DEĞİŞİKLİĞİ: Gemini'ye Ukraynaca cevap vermesini söyle
+                // Gemini'ye Ukraynaca cevap vermesini söyle
                 const systemPrompt = "You are a friendly and encouraging educational assistant. Analyze the following quiz results from a student named Selin. Provide a very short, 2-3 bullet point summary of her progress. Identify one area she is strong in and one area she could practice more. **Respond in Ukrainian.**";
                 
                 const userPrompt = `Here are Selin's latest quiz results (most recent first):\n${reportsText}`;
@@ -687,6 +679,7 @@
                 feedbackEl.style.color = '#e74c3c';
             }
 
+            // Raporu LocalStorage'a kaydet
             await saveQuizResult(
                 "Math", 
                 currentScore, 
@@ -743,7 +736,7 @@
         let currentVerbIndex = -1;
         const totalVerbQuestions = irregularVerbs.length;
         verbTotalQuestionsEl.textContent = totalVerbQuestions;
-        let currentVerbData = null;
+        let currentVerbData = null; // Mevcut fiili saklamak için (YENİ EKLENDİ)
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -766,21 +759,21 @@
                 return;
             }
 
-            currentVerbData = shuffledVerbs[currentVerbIndex];
+            currentVerbData = shuffledVerbs[currentVerbIndex]; // Fiili sakla
             verbBaseFormEl.textContent = `Verb Base Form (V1): ${currentVerbData.v1}`;
             
             verbV2Input.value = '';
             verbV3Input.value = '';
             verbFeedbackEl.textContent = '';
             verbSubmitButton.disabled = false;
-            geminiExampleButton.style.display = 'none'; 
+            geminiExampleButton.style.display = 'none'; // Gemini butonunu gizle
             verbV2Input.focus();
         }
 
         async function checkVerbAnswer() {
             if (verbSubmitButton.disabled) return;
 
-            const currentVerb = currentVerbData;
+            const currentVerb = currentVerbData; // Saklanan fiili kullan
             const userAnswerV2 = verbV2Input.value.trim().toLowerCase();
             const userAnswerV3 = verbV3Input.value.trim().toLowerCase();
             
@@ -806,12 +799,13 @@
                 feedbackMessage += `V2: ${currentVerb.v2}, V3: ${currentVerb.v3}.`;
                 verbFeedbackEl.style.color = '#e74c3c';
                 isCorrect = false;
-                geminiExampleButton.style.display = 'block'; 
+                geminiExampleButton.style.display = 'block'; // Hata yapınca butonu göster (YENİ EKLENDİ)
             }
 
             verbFeedbackEl.textContent = feedbackMessage;
             verbSubmitButton.disabled = true;
 
+            // Raporu LocalStorage'a kaydet
             await saveQuizResult(
                 "Irregular Verbs", 
                 currentVerbScore, 
@@ -824,17 +818,19 @@
             if (isCorrect) {
                 setTimeout(generateNewVerbQuestion, 2000);
             } else {
+                // Yanlış cevapta, Gemini butonunu görmesi için beklemeyi uzat
                 setTimeout(generateNewVerbQuestion, 3000);
             }
         }
 
         verbSubmitButton.addEventListener('click', checkVerbAnswer);
         
+        // Gemini Örnek Cümle Butonu (YENİ EKLENDİ)
         geminiExampleButton.onclick = async () => {
             if (!currentVerbData) return;
 
             const verb = currentVerbData;
-            // DİL DEĞİŞİKLİĞİ: Gemini'ye Ukraynaca cevap vermesini söyle
+            // Gemini'ye Ukraynaca cevap vermesini söyle
             const systemPrompt = "You are an English teacher. The user is a 10-year-old student. Write one, very simple example sentence for *each* of the 3 verb forms (V1, V2, V3). First show the sentence in English, then provide the **Ukrainian translation** on a new line. Format it clearly.";
             
             const simplePrompt = `Write 3 very simple example sentences for a 10-year-old using the verb "${verb.v1}".
