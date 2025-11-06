@@ -4,37 +4,182 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selin's Study Site</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ======================================= */
+        /* CSS (Stil) - Dark Pastel Theme & Centering */
+        /* ======================================= */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            /* Koyu, siyaha yakın pastel zemin */
+            background-color: #1c2833; 
+            color: #ecf0f1; 
+            transition: background-color 0.5s;
+            min-height: 100vh; 
+            display: flex; /* Dikey ortalama için flexbox başlatılır */
+            flex-direction: column; /* İçerikleri dikey yığar */
+        }
+        
+        /* Başlık Alanı (Header) */
+        header {
+            background: #212f3c; 
+            color: #ecf0f1;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        /* Ana İçerik Alanı (Quizleri Hem Yatayda Hem Dikeyde ORTALA) */
+        main {
+            flex-grow: 1; /* Geriye kalan tüm dikey alanı kapla */
+            padding: 30px 20px;
+            max-width: 1200px;
+            width: 100%; 
+            margin: 0 auto; 
+            
+            /* Dikey ortalama ayarları */
+            display: flex; 
+            gap: 30px; 
+            flex-wrap: wrap; 
+            justify-content: center; /* Yatayda ortalama */
+            align-items: center; /* Dikeyde ortalama */
+        }
+
+        /* Quiz Konteyner Stil (Yan Yana Gelen Kutular) */
+        #quiz-container, #irregular-verb-quiz-container {
+            flex: 1 1 45%; /* Yan yana gelmeyi garanti eder, minimum %45 genişlik */
+            min-width: 350px; 
+            max-width: 550px;
+            padding: 30px;
+            background: #2c3e50; 
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7); 
+            border-top: 5px solid #1abc9c; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeIn 1s ease-out; 
+            margin: 10px; /* Her kutu etrafında biraz boşluk bırakır */
+        }
+
+        /* Hover Animasyonu */
+        #quiz-container:hover, #irregular-verb-quiz-container:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Başlıklar ve Metinler */
+        h2 {
+            color: #1abc9c; 
+            /* Başlığın kaymasını engellemek için gerekli: 
+               Kutunun tüm genişliğini kullanmasını sağlar */
+            width: 100%; 
+            box-sizing: border-box; 
+            border-bottom: 2px solid rgba(236, 240, 241, 0.1); 
+            padding-bottom: 15px;
+            margin-top: 0;
+        }
+        p, span {
+            color: #ecf0f1; 
+        }
+        #question, #verb-base-form {
+            color: #f1c40f; 
+            font-size: 1.7rem !important;
+        }
+
+        /* Giriş Kutuları */
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            background-color: #ecf0f1; 
+            color: #333;
+        }
+
+        /* Butonlar */
+        button {
+            background-color: #1abc9c; 
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease, transform 0.1s;
+        }
+        button:hover {
+            background-color: #16a085; 
+            transform: scale(1.02);
+        }
+        button:disabled {
+            background-color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        /* Geri Bildirim ve Puan Alanı */
+        #score, #verb-score {
+            font-weight: bold;
+            color: #e74c3c; 
+        }
+
+        /* Animasyon Tanımı */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: #bdc3c7;
+            font-size: 0.9rem;
+            border-top: 1px solid #34495e;
+            background-color: #212f3c; 
+        }
+    </style>
 </head>
 <body>
     <header>
         <h1>Hello Selin!</h1>
     </header>
-<div id="irregular-verb-quiz-container" style="margin-top: 40px;">
-        <h2>English Exercise: Irregular Verbs</h2>
-        
-        <div id="verb-question-area">
-            <p id="verb-base-form" style="font-size: 1.5rem; font-weight: bold;">Loading verb...</p>
-            
-            <p>Simple Past (V2):</p>
-            <input type="text" id="verb-v2-input" placeholder="V2 form">
-            
-            <p>Past Participle (V3):</p>
-            <input type="text" id="verb-v3-input" placeholder="V3 form">
-            
-            <button id="verb-submit-button">Check Verb</button>
-            
-            <p id="verb-feedback" style="margin-top: 15px; font-weight: bold;"></p>
-        </div>
-        
-        <div id="verb-score-container" style="margin-top: 20px;">
-            <p>Score: <span id="verb-score">0</span> / <span id="verb-total-questions">0</span></p>
-        </div>
-    </div>
+
     <main>
-        <h2>Math Exercise: Multiplication</h2>
-        
+        <!-- IRREGULAR VERBS QUIZ (English) -->
+        <div id="irregular-verb-quiz-container">
+            <h2>English Exercise: Irregular Verbs</h2>
+            
+            <div id="verb-question-area">
+                <p id="verb-base-form" style="font-size: 1.5rem; font-weight: bold;">Loading verb...</p>
+                
+                <p>Simple Past (V2):</p>
+                <input type="text" id="verb-v2-input" placeholder="V2 form">
+                
+                <p>Past Participle (V3):</p>
+                <input type="text" id="verb-v3-input" placeholder="V3 form">
+                
+                <button id="verb-submit-button">Check Verb</button>
+                
+                <p id="verb-feedback" style="margin-top: 15px; font-weight: bold;"></p>
+            </div>
+            
+            <div id="verb-score-container" style="margin-top: 20px;">
+                <p>Score: <span id="verb-score">0</span> / <span id="verb-total-questions">0</span></p>
+            </div>
+        </div>
+
+        <!-- MULTIPLICATION QUIZ (Math) -->
         <div id="quiz-container">
+            <h2>Math Exercise: Multiplication</h2>
             
             <p id="question" style="font-size: 1.5rem; font-weight: bold;">Loading question...</p>
             
@@ -43,10 +188,10 @@
             <button id="submit-button">Check</button>
             
             <p id="feedback" style="margin-top: 15px; font-weight: bold;"></p>
-        </div>
-
-        <div id="score-container" style="margin-top: 20px;">
-            <p>Score: <span id="score">0</span> / <span id="total-questions">10</span></p>
+            
+            <div id="score-container" style="margin-top: 20px;">
+                <p>Score: <span id="score">0</span> / <span id="total-questions">10</span></p>
+            </div>
         </div>
     </main>
 
@@ -54,6 +199,212 @@
         <p>&copy; 2025 Selin's Educational Platform</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        // =======================================
+        // JAVASCRIPT (Mantık)
+        // =======================================
+
+        // ===============================================
+        // 1. Math Multiplication Quiz Logic (English)
+        // ===============================================
+
+        const questionEl = document.getElementById('question');
+        const answerInput = document.getElementById('answer-input');
+        const submitButton = document.getElementById('submit-button');
+        const feedbackEl = document.getElementById('feedback');
+        const scoreEl = document.getElementById('score');
+        const totalQuestionsEl = document.getElementById('total-questions');
+        const quizContainer = document.getElementById('quiz-container');
+
+        let currentScore = 0;
+        let currentQuestionNumber = 0;
+        const totalQuestions = 10;
+        let correctAnswer = 0;
+
+        function generateRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateNewQuestion() {
+            if (currentQuestionNumber >= totalQuestions) {
+                quizContainer.innerHTML = `
+                    <h3>Quiz Finished!</h3>
+                    <p>Your total score is: ${currentScore} / ${totalQuestions}.</p>
+                    <p style="color: #1abc9c; font-weight: bold;">Congratulations, you worked hard!</p>
+                `;
+                return;
+            }
+
+            currentQuestionNumber++;
+            const num1 = generateRandomNumber(1, 10);
+            const num2 = generateRandomNumber(1, 10);
+            correctAnswer = num1 * num2;
+            
+            questionEl.textContent = "Question " + currentQuestionNumber + ": " + num1 + " x " + num2 + " = ?";
+            answerInput.value = '';
+            feedbackEl.textContent = '';
+            submitButton.disabled = false;
+            answerInput.focus();
+        }
+
+        function checkAnswer() {
+            if (submitButton.disabled) return; 
+            
+            const userAnswer = parseInt(answerInput.value);
+            if (isNaN(userAnswer)) {
+                feedbackEl.textContent = "Please enter a number.";
+                feedbackEl.style.color = '#f1c40f'; // Yellowish warning
+                return;
+            }
+
+            if (userAnswer === correctAnswer) {
+                currentScore++;
+                scoreEl.textContent = currentScore;
+                feedbackEl.textContent = 'CORRECT! You are great.';
+                feedbackEl.style.color = '#1abc9c'; // Green
+                submitButton.disabled = true;
+                setTimeout(generateNewQuestion, 1000);
+            } else {
+                feedbackEl.textContent = 'WRONG! Try again.';
+                feedbackEl.style.color = '#e74c3c'; // Red
+            }
+        }
+
+        submitButton.addEventListener('click', checkAnswer);
+        answerInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Sayfa yüklendiğinde ilk soruyu oluştur
+        generateNewQuestion();
+
+        // ===============================================
+        // 2. Irregular Verbs Quiz Logic (English)
+        // ===============================================
+
+        const irregularVerbs = [
+            { v1: "be", v2: "was/were", v3: "been" },
+            { v1: "go", v2: "went", v3: "gone" },
+            { v1: "do", v2: "did", v3: "done" },
+            { v1: "see", v2: "saw", v3: "seen" },
+            { v1: "come", v2: "came", v3: "come" },
+            { v1: "eat", v2: "ate", v3: "eaten" },
+            { v1: "write", v2: "wrote", v3: "written" },
+            { v1: "run", v2: "ran", v3: "run" },
+            { v1: "take", v2: "took", v3: "taken" },
+            { v1: "make", v2: "made", v3: "made" },
+            { v1: "say", v2: "said", v3: "said" },
+            { v1: "get", v2: "got", v3: "got/gotten" },
+            { v1: "give", v2: "gave", v3: "given" },
+            { v1: "find", v2: "found", v3: "found" },
+            { v1: "know", v2: "knew", v3: "known" },
+            { v1: "think", v2: "thought", v3: "thought" },
+            { v1: "tell", v2: "told", v3: "told" },
+            { v1: "become", v2: "became", v3: "become" },
+            { v1: "leave", v2: "left", v3: "left" },
+            { v1: "hear", v2: "heard", v3: "heard" },
+        ];
+
+        const verbBaseFormEl = document.getElementById('verb-base-form');
+        const verbV2Input = document.getElementById('verb-v2-input');
+        const verbV3Input = document.getElementById('verb-v3-input');
+        const verbSubmitButton = document.getElementById('verb-submit-button');
+        const verbFeedbackEl = document.getElementById('verb-feedback');
+        const verbScoreEl = document.getElementById('verb-score');
+        const verbTotalQuestionsEl = document.getElementById('verb-total-questions');
+        const irregularVerbQuizContainer = document.getElementById('irregular-verb-quiz-container');
+
+
+        let currentVerbScore = 0;
+        let currentVerbIndex = -1;
+        const totalVerbQuestions = irregularVerbs.length;
+        verbTotalQuestionsEl.textContent = totalVerbQuestions;
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+        let shuffledVerbs = shuffleArray(irregularVerbs); // Karıştırılmış fiil listesi
+
+        function generateNewVerbQuestion() {
+            currentVerbIndex++;
+
+            if (currentVerbIndex >= totalVerbQuestions) {
+                // Quiz bittiğinde fiil quizini temizle ve sonucu göster
+                irregularVerbQuizContainer.innerHTML = `
+                    <h3>Quiz Finished!</h3>
+                    <p>Your Irregular Verbs score: ${currentVerbScore} / ${totalVerbQuestions}.</p>
+                    <p style="color: #1abc9c; font-weight: bold;">Great job, Selin!</p>
+                `;
+                return;
+            }
+
+            const currentVerb = shuffledVerbs[currentVerbIndex];
+            verbBaseFormEl.textContent = `Verb Base Form (V1): ${currentVerb.v1}`;
+            
+            verbV2Input.value = '';
+            verbV3Input.value = '';
+            verbFeedbackEl.textContent = '';
+            verbSubmitButton.disabled = false;
+            verbV2Input.focus();
+        }
+
+        function checkVerbAnswer() {
+            if (verbSubmitButton.disabled) return;
+
+            const currentVerb = shuffledVerbs[currentVerbIndex];
+            const userAnswerV2 = verbV2Input.value.trim().toLowerCase();
+            const userAnswerV3 = verbV3Input.value.trim().toLowerCase();
+            
+            // Birden fazla doğru cevabı (was/were, got/gotten gibi) kontrol etmek için
+            const correctV2s = currentVerb.v2.split('/').map(c => c.trim().toLowerCase());
+            const correctV3s = currentVerb.v3.split('/').map(c => c.trim().toLowerCase());
+            
+            // Cevapların doğruluğunu kontrol etme
+            const isV2Correct = correctV2s.includes(userAnswerV2);
+            const isV3Correct = correctV3s.includes(userAnswerV3);
+            
+            let feedbackMessage = '';
+            let isCorrect = false;
+
+            if (isV2Correct && isV3Correct) {
+                currentVerbScore++;
+                verbScoreEl.textContent = currentVerbScore;
+                feedbackMessage = 'PERFECT! Both forms are correct.';
+                verbFeedbackEl.style.color = '#1abc9c'; // Green
+                isCorrect = true;
+            } else {
+                feedbackMessage = 'WRONG! The correct forms are: ';
+                feedbackMessage += `V2: ${currentVerb.v2}, V3: ${currentVerb.v3}.`;
+                verbFeedbackEl.style.color = '#e74c3c'; // Red
+                isCorrect = false;
+            }
+
+            verbFeedbackEl.textContent = feedbackMessage;
+            verbSubmitButton.disabled = true;
+
+            if (isCorrect) {
+                setTimeout(generateNewVerbQuestion, 2000);
+            } else {
+                setTimeout(generateNewVerbQuestion, 3000);
+            }
+        }
+
+        verbSubmitButton.addEventListener('click', checkVerbAnswer);
+
+        verbV3Input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Sayfa yüklendiğinde fiil quizini başlat
+        generateNewVerbQuestion();
+    </script>
 </body>
 </html>
