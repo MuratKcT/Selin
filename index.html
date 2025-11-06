@@ -4,27 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selin's Study Site</title>
-    <!-- Firebase Libraries - Veritabanı ve Kimlik Doğrulama için Gerekli -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, addDoc, collection, serverTimestamp, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // Firebase global değişkenlerini global scope'a taşıma
-        window.initializeApp = initializeApp;
-        window.getAuth = getAuth;
-        window.signInAnonymously = signInAnonymously;
-        window.signInWithCustomToken = signInWithCustomToken;
-        window.onAuthStateChanged = onAuthStateChanged;
-        window.getFirestore = getFirestore;
-        window.doc = doc;
-        window.addDoc = addDoc;
-        window.collection = collection;
-        window.serverTimestamp = serverTimestamp;
-        window.query = query;
-        window.where = where;
-        window.onSnapshot = onSnapshot;
-    </script>
+    <!-- Artık Firebase kütüphanelerine gerek yok -->
     <style>
         /* ======================================= */
         /* CSS (Stil) - Dark Pastel Theme & Centering */
@@ -305,83 +285,43 @@
 
     <script>
         // =======================================
-        // Firebase Initialization and Core Functions
+        // LocalStorage (Tarayıcı Hafızası) Ebeveyn Kontrolü
         // =======================================
-        
-        // Canvas Global Değişkenlerini Kontrol Etme
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
-        let db = null;
-        let auth = null;
-        let userId = 'student_selin'; // Varsayılan kullanıcı ID'si (Selin)
-        let isAuthReady = false;
-        
-        // İlgili değişkenler var olduğu sürece Firebase'in kullanıma hazır olduğunu varsayıyoruz (Canvas ortamı)
-        let isFirebaseAvailable = !!firebaseConfig && !!window.initializeApp;
 
-        // Firebase'i Başlatma ve Kimlik Doğrulama
-        if (isFirebaseAvailable) {
-            try {
-                const app = window.initializeApp(firebaseConfig);
-                db = window.getFirestore(app);
-                auth = window.getAuth(app);
-                
-                // Kullanıcı Durumu Değişikliğini Dinleme
-                window.onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        console.log("Firebase initialized. User ID:", userId);
-                    } else {
-                        // Token varsa custom token ile, yoksa anonim giriş yap
-                        if (initialAuthToken) {
-                            await window.signInWithCustomToken(auth, initialAuthToken);
-                        } else {
-                            await window.signInAnonymously(auth);
-                        }
-                    }
-                    isAuthReady = true; // Kimlik doğrulama tamamlandı
-                });
-            } catch (e) {
-                console.error("Firebase initialization failed:", e);
-                isFirebaseAvailable = false; 
-            }
-        } else {
-            // Harici ortamda çalışırken (GitHub Pages)
-            console.warn("Firebase: Canvas yapılandırma değişkenleri eksik. İlerleme kayıtları tutulmayacak.");
-        }
-
-        // Sonuçları Firestore'a Kaydetme Fonksiyonu
+        // Sonuçları LocalStorage'a Kaydetme Fonksiyonu
         async function saveQuizResult(quizType, score, total, isCorrect, detail) {
-            if (!isFirebaseAvailable || !isAuthReady || !db) {
-                // Veritabanı hazır değilse veya yoksa kaydetme
-                console.warn(`Veritabanı hazır değil. Sonuç kaydedilemedi: ${quizType}`);
-                return;
-            }
-
-            const resultData = {
-                userId: userId,
-                quizType: quizType,
-                score: score,
-                totalQuestions: total,
-                isCorrect: isCorrect,
-                detail: detail,
-                timestamp: window.serverTimestamp()
-            };
-
-            const path = `artifacts/${appId}/users/${userId}/quiz_results`;
-
             try {
-                await window.addDoc(window.collection(db, path), resultData);
-                console.log(`Result saved for ${quizType}.`);
+                // Önce mevcut raporları al
+                let reports = JSON.parse(localStorage.getItem('selinQuizReports')) || [];
+                
+                const resultData = {
+                    quizType: quizType,
+                    score: score,
+                    totalQuestions: total,
+                    isCorrect: isCorrect,
+                    detail: detail,
+                    timestamp: new Date().toISOString() // ISO 8601 formatında tarih
+                };
+                
+                // Yeni raporu başa ekle (en yeni üstte)
+                reports.unshift(resultData);
+
+                // Hafızada sadece son 100 raporu tut (isteğe bağlı)
+                if (reports.length > 100) {
+                    reports = reports.slice(0, 100);
+                }
+
+                // Tekrar kaydet
+                localStorage.setItem('selinQuizReports', JSON.stringify(reports));
+                console.log(`Result saved to LocalStorage for ${quizType}.`);
+
             } catch (e) {
-                console.error("Error saving document:", e);
+                console.error("Error saving to LocalStorage:", e);
             }
         }
 
         // =======================================
-        // Parent Dashboard Logic (Yeniden Düzenlendi)
+        // Parent Dashboard Logic (LocalStorage Versiyonu)
         // =======================================
 
         const parentModal = document.getElementById('parent-modal');
@@ -399,21 +339,12 @@
         parentAccessButton.onclick = () => {
             // Modalın içini her açılışta sıfırla
             reportsArea.style.display = 'none'; // Raporları gizle
+            authArea.style.display = 'block'; // PIN girişini göster
             parentPinInput.value = ''; // PIN girişini temizle
+            pinFeedback.textContent = "Enter PIN to access reports (PIN: 1234):";
+            pinFeedback.style.color = '#f1c40f'; // Sarı bilgi
             
             parentModal.style.display = 'flex'; // Modalı göster
-
-            if (!isFirebaseAvailable) {
-                // Firebase yoksa (GitHub Pages'teyiz)
-                pinFeedback.textContent = "Veritabanı bağlantısı yok. Raporlar bu ortamda kullanılamıyor.";
-                pinFeedback.style.color = '#e74c3c'; // Kırmızı hata
-                authArea.style.display = 'none'; // PIN girişini gizle
-            } else {
-                // Firebase varsa (Canvas'tayız)
-                pinFeedback.textContent = "Enter PIN to access reports (PIN: 1234):";
-                pinFeedback.style.color = '#f1c40f'; // Sarı bilgi
-                authArea.style.display = 'block'; // PIN girişini göster
-            }
         };
 
         closeButton.onclick = () => {
@@ -429,70 +360,43 @@
         pinSubmitButton.onclick = () => {
             const enteredPin = parentPinInput.value.trim();
             if (enteredPin === CORRECT_PIN) {
-                
-                // PIN doğru, şimdi Firebase hazır mı kontrol et.
-                if (!isAuthReady || !db) {
-                     pinFeedback.textContent = 'PIN doğru, ancak güvenli bağlantı bekleniyor. Lütfen 3 saniye sonra tekrar deneyin.';
-                     pinFeedback.style.color = '#f1c40f'; // Sarı uyarı
-                     
-                     // 3 saniye bekleme, sonra tekrar deneme mantığı
-                     setTimeout(() => {
-                         if (isAuthReady) {
-                             pinFeedback.textContent = 'Bağlantı kuruldu! Raporlar getiriliyor...';
-                             pinFeedback.style.color = '#1abc9c';
-                             authArea.style.display = 'none';
-                             reportsArea.style.display = 'block';
-                             fetchReports();
-                         } else {
-                             pinFeedback.textContent = 'Bağlantı kurulamadı. Lütfen modalı kapatıp tekrar açın.';
-                             pinFeedback.style.color = '#e74c3c';
-                         }
-                     }, 3000); // 3 saniye bekleme
-                     return;
-                }
-
-                // Zaten hazırsa (örn. ikinci deneme)
+                // PIN doğru
                 pinFeedback.textContent = 'Erişim izni verildi! Raporlar getiriliyor...';
                 pinFeedback.style.color = '#1abc9c';
                 authArea.style.display = 'none';
                 reportsArea.style.display = 'block';
-                fetchReports();
+                fetchReportsFromLocalStorage();
             } else {
                 pinFeedback.textContent = 'Yanlış PIN. Tekrar deneyin.';
                 pinFeedback.style.color = '#e74c3c';
             }
         };
 
-        // Raporları Firebase'den Çekme
-        function fetchReports() {
-            if (!isAuthReady || !db) {
-                reportsList.innerHTML = '<li>Hata: Güvenli bağlantı tamamlanmadı. Lütfen sayfayı yenileyin veya 5 saniye bekleyin.</li>';
-                return;
-            }
-            
+        // Raporları LocalStorage'dan Çekme
+        function fetchReportsFromLocalStorage() {
             reportsList.innerHTML = '<li>Sonuçlar getiriliyor...</li>';
 
-            const path = `artifacts/${appId}/users/${userId}/quiz_results`;
-            // NOT: orderBy('timestamp', 'desc') ekleyebiliriz ama indeks gerektirebilir. Şimdilik basit tutalım.
-            const resultsQuery = window.query(window.collection(db, path)); 
-            
-            // onSnapshot ile gerçek zamanlı dinleme
-            window.onSnapshot(resultsQuery, (snapshot) => {
+            try {
+                const reports = JSON.parse(localStorage.getItem('selinQuizReports')) || [];
+                
                 reportsList.innerHTML = ''; // Listeyi temizle
-                if (snapshot.empty) {
+                if (reports.length === 0) {
                     reportsList.innerHTML = '<li>Henüz kaydedilmiş bir quiz sonucu yok.</li>';
                     return;
                 }
                 
-                // Verileri önce bir diziye alıp tersine çevirerek en yeniyi üste alalım
-                const docs = snapshot.docs.map(doc => doc.data());
-                // Timestamp'e göre sırala (en yeni üstte)
-                docs.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
-                docs.forEach(data => {
+                // Raporlar zaten en yeni üstte olacak şekilde kaydedildi
+                reports.forEach(data => {
                     const li = document.createElement('li');
                     
-                    const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString('tr-TR') : 'Mevcut Değil';
+                    // Tarihi formatlama
+                    const time = new Date(data.timestamp).toLocaleString('tr-TR', {
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        year: 'numeric', 
+                        hour: '2-digit', 
+                        minute: '2-digit'
+                    });
                     
                     li.innerHTML = `
                         <strong>${data.quizType}</strong> - ${time}<br>
@@ -501,10 +405,11 @@
                     `;
                     reportsList.appendChild(li);
                 });
-            }, (error) => {
-                console.error("Error fetching reports: ", error);
+
+            } catch (error) {
+                console.error("Error fetching reports from LocalStorage: ", error);
                 reportsList.innerHTML = `<li>Raporlar getirilirken hata oluştu: ${error.message}</li>`;
-            });
+            }
         }
 
 
@@ -578,7 +483,7 @@
                 feedbackEl.style.color = '#e74c3c'; // Red
             }
 
-            // SONUCU KAYDETME
+            // SONUCU KAYDETME (LocalStorage'a)
             await saveQuizResult(
                 "Math", 
                 currentScore, 
@@ -701,7 +606,7 @@
             verbFeedbackEl.textContent = feedbackMessage;
             verbSubmitButton.disabled = true;
 
-            // SONUCU KAYDETME
+            // SONUCU KAYDETME (LocalStorage'a)
             await saveQuizResult(
                 "Irregular Verbs", 
                 currentVerbScore, 
