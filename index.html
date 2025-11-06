@@ -309,9 +309,10 @@
         let auth = null;
         let userId = 'student_selin'; // Varsayılan kullanıcı ID'si (Selin)
         let isAuthReady = false;
+        let isFirebaseAvailable = !!firebaseConfig && !!window.initializeApp; // Firebase kütüphaneleri ve config var mı?
 
         // Firebase'i Başlatma ve Kimlik Doğrulama
-        if (firebaseConfig && window.initializeApp) {
+        if (isFirebaseAvailable) {
             try {
                 const app = window.initializeApp(firebaseConfig);
                 db = window.getFirestore(app);
@@ -331,20 +332,23 @@
                         }
                     }
                     isAuthReady = true;
-                    // Auth hazır olduğunda, belki bekleyen raporları hemen çekebiliriz (ancak şimdilik sadece hazır bayrağını ayarlıyoruz).
                 });
             } catch (e) {
                 console.error("Firebase initialization failed:", e);
+                isFirebaseAvailable = false; // Başlatma hatası durumunda da kullanılamaz olarak işaretle
             }
         } else {
-            console.error("Firebase libraries or config not available.");
+            console.warn("Firebase: Canvas yapılandırma değişkenleri eksik. İlerleme kayıtları tutulmayacak.");
         }
 
         // Sonuçları Firestore'a Kaydetme Fonksiyonu
         async function saveQuizResult(quizType, score, total, isCorrect, detail) {
+            if (!isFirebaseAvailable) {
+                console.warn(`Veritabanı bağlantısı yok. Sonuç kaydedilemedi: ${quizType}`);
+                return;
+            }
             if (!isAuthReady || !db) {
                 console.error("Firebase not ready or DB not initialized. Cannot save data.");
-                // Burada datanın kaydedilmediğini belirten geçici bir mesaj gösterilebilir, ancak şimdilik konsol hatası yeterli.
                 return;
             }
 
@@ -358,17 +362,13 @@
                 timestamp: window.serverTimestamp()
             };
 
-            // ÖNEMLİ: Bu yol, Canvas güvenlik kurallarına uyar.
             const path = `artifacts/${appId}/users/${userId}/quiz_results`;
 
             try {
-                // Özel koleksiyona sonucu ekleme
                 await window.addDoc(window.collection(db, path), resultData);
                 console.log(`Result saved for ${quizType}.`);
             } catch (e) {
                 console.error("Error saving document:", e);
-                // Kullanıcıya da görsel olarak bildirim gösterebiliriz.
-                // alert(`Error: Could not save result for ${quizType}. Please try again.`); // alert kullanmaktan kaçınıyoruz
                 console.error(`Error: Could not save result for ${quizType}. Please check console.`);
             }
         }
@@ -390,6 +390,10 @@
         const CORRECT_PIN = "1234"; // Ebeveyn PIN kodu
 
         parentAccessButton.onclick = () => {
+            if (!isFirebaseAvailable) {
+                alert("Veritabanı bağlantısı yok. Ebeveyn Raporları kullanılamıyor.");
+                return;
+            }
             parentModal.style.display = 'flex';
         };
 
@@ -414,18 +418,27 @@
                 
                 // PIN doğru, şimdi Firebase hazır mı kontrol et.
                 if (!isAuthReady || !db) {
-                     pinFeedback.textContent = 'PIN correct, but still waiting for secure connection. Try again in 5 seconds.';
+                     pinFeedback.textContent = 'PIN doğru, ancak güvenli bağlantı bekleniyor. Lütfen 5 saniye sonra tekrar deneyin.';
                      pinFeedback.style.color = '#f1c40f'; // Sarı uyarı
+                     // 5 saniye bekleme, sonra tekrar deneme mantığı
+                     setTimeout(() => {
+                         if (!isAuthReady) {
+                             pinFeedback.textContent = 'Bağlantı kurulamadı. Lütfen sayfayı yenileyin.';
+                         } else {
+                             // Bağlantı kurulduysa raporları çek
+                             pinSubmitButton.onclick(); // Kendini tekrar çağır
+                         }
+                     }, 5000);
                      return;
                 }
 
-                pinFeedback.textContent = 'Access granted!';
+                pinFeedback.textContent = 'Erişim izni verildi!';
                 pinFeedback.style.color = '#1abc9c';
                 authArea.style.display = 'none';
                 reportsArea.style.display = 'block';
                 fetchReports();
             } else {
-                pinFeedback.textContent = 'Incorrect PIN. Try again.';
+                pinFeedback.textContent = 'Yanlış PIN. Tekrar deneyin.';
                 pinFeedback.style.color = '#e74c3c';
             }
         };
@@ -433,12 +446,11 @@
         // Raporları Firebase'den Çekme
         function fetchReports() {
             if (!isAuthReady || !db) {
-                // Bu durumun zaten PIN kontrolünde yakalanması beklenir, ama ekstra güvenlik.
-                reportsList.innerHTML = '<li>Error: Authentication is not complete. Please try again in a moment.</li>';
+                reportsList.innerHTML = '<li>Hata: Güvenli bağlantı tamamlanmadı. Lütfen sayfayı yenileyin veya 5 saniye bekleyin.</li>';
                 return;
             }
             
-            reportsList.innerHTML = '<li>Fetching latest results...</li>';
+            reportsList.innerHTML = '<li>Sonuçlar getiriliyor...</li>';
 
             const path = `artifacts/${appId}/users/${userId}/quiz_results`;
             const resultsQuery = window.query(window.collection(db, path));
@@ -447,7 +459,7 @@
             window.onSnapshot(resultsQuery, (snapshot) => {
                 reportsList.innerHTML = ''; // Listeyi temizle
                 if (snapshot.empty) {
-                    reportsList.innerHTML = '<li>No quiz results recorded yet.</li>';
+                    reportsList.innerHTML = '<li>Henüz kaydedilmiş bir quiz sonucu yok.</li>';
                     return;
                 }
                 
@@ -455,18 +467,18 @@
                     const data = doc.data();
                     const li = document.createElement('li');
                     
-                    const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString() : 'N/A';
+                    const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString('tr-TR') : 'Mevcut Değil';
                     
                     li.innerHTML = `
                         <strong>${data.quizType}</strong> - ${time}<br>
-                        Score: ${data.isCorrect ? 'Correct' : 'Wrong'} (Attempt ${data.totalQuestions})<br>
-                        Detail: ${data.detail}
+                        Sonuç: ${data.isCorrect ? 'Doğru' : 'Yanlış'} (Soru ${data.totalQuestions})<br>
+                        Detay: ${data.detail}
                     `;
                     reportsList.appendChild(li);
                 });
             }, (error) => {
                 console.error("Error fetching reports: ", error);
-                reportsList.innerHTML = `<li>Error fetching reports: ${error.message}</li>`;
+                reportsList.innerHTML = `<li>Raporlar getirilirken hata oluştu: ${error.message}</li>`;
             });
         }
 
