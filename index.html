@@ -4,6 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selin's Study Site</title>
+    <!-- Firebase Libraries - Veritabanı ve Kimlik Doğrulama için Gerekli -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, collection, serverTimestamp, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Firebase global değişkenlerini global scope'a taşıma
+        window.initializeApp = initializeApp;
+        window.getAuth = getAuth;
+        window.signInAnonymously = signInAnonymously;
+        window.signInWithCustomToken = signInWithCustomToken;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.getFirestore = getFirestore;
+        window.doc = doc;
+        window.addDoc = addDoc;
+        window.collection = collection;
+        window.serverTimestamp = serverTimestamp;
+        window.query = query;
+        window.where = where;
+        window.onSnapshot = onSnapshot;
+    </script>
     <style>
         /* ======================================= */
         /* CSS (Stil) - Dark Pastel Theme & Centering */
@@ -75,8 +96,7 @@
         /* Başlıklar ve Metinler */
         h2 {
             color: #1abc9c; 
-            /* Başlığın kaymasını engellemek için gerekli: 
-               Kutunun tüm genişliğini kullanmasını sağlar */
+            /* Kutunun tüm genişliğini kullanmasını sağlar */
             width: 100%; 
             box-sizing: border-box; 
             border-bottom: 2px solid rgba(236, 240, 241, 0.1); 
@@ -136,6 +156,58 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Ebeveyn Paneli Modalı */
+        .modal {
+            position: fixed;
+            z-index: 10;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none; /* Varsayılan olarak gizli */
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #2c3e50;
+            padding: 25px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+            border-top: 5px solid #e74c3c;
+            animation: slideIn 0.5s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover, .close-button:focus {
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        #reports-list {
+            list-style: none;
+            padding: 0;
+        }
+        #reports-list li {
+            background: #3a5369;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
 
         /* Footer */
         footer {
@@ -193,21 +265,202 @@
                 <p>Score: <span id="score">0</span> / <span id="total-questions">10</span></p>
             </div>
         </div>
+        
+        <!-- Parent Access Button -->
+        <button id="parent-access-button" style="position: fixed; bottom: 20px; right: 20px; z-index: 5; background-color: #e74c3c; color: white;">Parent Access</button>
     </main>
 
     <footer>
         <p>&copy; 2025 Selin's Educational Platform</p>
     </footer>
 
+    <!-- Ebeveyn Kontrol Paneli Modalı -->
+    <div id="parent-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 style="color: #e74c3c;">Parent Dashboard</h2>
+            <div id="auth-area">
+                <p>Enter PIN to access reports (PIN: 1234):</p>
+                <input type="password" id="parent-pin-input" placeholder="PIN Code">
+                <button id="pin-submit-button" style="background-color: #e74c3c;">Access</button>
+                <p id="pin-feedback" style="color: #f1c40f;"></p>
+            </div>
+            <div id="reports-area" style="display: none;">
+                <h3 style="color: #1abc9c;">Selin's Progress Reports</h3>
+                <ul id="reports-list">
+                    <li>Loading results...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         // =======================================
-        // JAVASCRIPT (Mantık)
+        // Firebase Initialization and Core Functions
+        // =======================================
+        
+        // Canvas Global Değişkenlerini Kontrol Etme
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        let db = null;
+        let auth = null;
+        let userId = 'student_selin'; // Varsayılan kullanıcı ID'si (Selin)
+        let isAuthReady = false;
+
+        // Firebase'i Başlatma ve Kimlik Doğrulama
+        if (firebaseConfig && window.initializeApp) {
+            try {
+                const app = window.initializeApp(firebaseConfig);
+                db = window.getFirestore(app);
+                auth = window.getAuth(app);
+                
+                // Kullanıcı Durumu Değişikliğini Dinleme
+                window.onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Firebase initialized. User ID:", userId);
+                    } else {
+                        // Token varsa custom token ile, yoksa anonim giriş yap
+                        if (initialAuthToken) {
+                            await window.signInWithCustomToken(auth, initialAuthToken);
+                        } else {
+                            await window.signInAnonymously(auth);
+                        }
+                    }
+                    isAuthReady = true;
+                });
+            } catch (e) {
+                console.error("Firebase initialization failed:", e);
+            }
+        } else {
+            console.error("Firebase libraries or config not available.");
+        }
+
+        // Sonuçları Firestore'a Kaydetme Fonksiyonu
+        async function saveQuizResult(quizType, score, total, isCorrect, detail) {
+            if (!isAuthReady || !db) {
+                console.error("Firebase not ready or DB not initialized. Cannot save data.");
+                return;
+            }
+
+            const resultData = {
+                userId: userId,
+                quizType: quizType,
+                score: score,
+                totalQuestions: total,
+                isCorrect: isCorrect,
+                detail: detail,
+                timestamp: window.serverTimestamp()
+            };
+
+            const path = `artifacts/${appId}/users/${userId}/quiz_results`;
+
+            try {
+                // Özel koleksiyona sonucu ekleme
+                await window.addDoc(window.collection(db, path), resultData);
+                console.log(`Result saved for ${quizType}.`);
+            } catch (e) {
+                console.error("Error saving document:", e);
+            }
+        }
+
+        // =======================================
+        // Parent Dashboard Logic
         // =======================================
 
-        // ===============================================
-        // 1. Math Multiplication Quiz Logic (English)
-        // ===============================================
+        const parentModal = document.getElementById('parent-modal');
+        const parentAccessButton = document.getElementById('parent-access-button');
+        const closeButton = document.querySelector('.close-button');
+        const pinSubmitButton = document.getElementById('pin-submit-button');
+        const parentPinInput = document.getElementById('parent-pin-input');
+        const pinFeedback = document.getElementById('pin-feedback');
+        const authArea = document.getElementById('auth-area');
+        const reportsArea = document.getElementById('reports-area');
+        const reportsList = document.getElementById('reports-list');
+        
+        const CORRECT_PIN = "1234"; // Ebeveyn PIN kodu
 
+        parentAccessButton.onclick = () => {
+            parentModal.style.display = 'flex';
+        };
+
+        closeButton.onclick = () => {
+            parentModal.style.display = 'none';
+            // Paneli sıfırla
+            authArea.style.display = 'block';
+            reportsArea.style.display = 'none';
+            pinFeedback.textContent = '';
+            parentPinInput.value = '';
+        };
+
+        window.onclick = (event) => {
+            if (event.target === parentModal) {
+                parentModal.style.display = 'none';
+            }
+        };
+
+        pinSubmitButton.onclick = () => {
+            const enteredPin = parentPinInput.value.trim();
+            if (enteredPin === CORRECT_PIN) {
+                pinFeedback.textContent = 'Access granted!';
+                pinFeedback.style.color = '#1abc9c';
+                authArea.style.display = 'none';
+                reportsArea.style.display = 'block';
+                fetchReports();
+            } else {
+                pinFeedback.textContent = 'Incorrect PIN. Try again.';
+                pinFeedback.style.color = '#e74c3c';
+            }
+        };
+
+        // Raporları Firebase'den Çekme
+        function fetchReports() {
+            if (!isAuthReady || !db) {
+                reportsList.innerHTML = '<li>Error: Authentication is not complete. Please try again in a moment.</li>';
+                return;
+            }
+            
+            reportsList.innerHTML = '<li>Fetching latest results...</li>';
+
+            const path = `artifacts/${appId}/users/${userId}/quiz_results`;
+            const resultsQuery = window.query(window.collection(db, path));
+            
+            // onSnapshot ile gerçek zamanlı dinleme
+            window.onSnapshot(resultsQuery, (snapshot) => {
+                reportsList.innerHTML = ''; // Listeyi temizle
+                if (snapshot.empty) {
+                    reportsList.innerHTML = '<li>No quiz results recorded yet.</li>';
+                    return;
+                }
+                
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const li = document.createElement('li');
+                    
+                    const time = data.timestamp ? new Date(data.timestamp.seconds * 1000).toLocaleString() : 'N/A';
+                    
+                    li.innerHTML = `
+                        <strong>${data.quizType}</strong> - ${time}<br>
+                        Score: ${data.isCorrect ? 'Correct' : 'Wrong'} (${data.score} / ${data.totalQuestions})<br>
+                        Detail: ${data.detail}
+                    `;
+                    reportsList.appendChild(li);
+                });
+            }, (error) => {
+                console.error("Error fetching reports: ", error);
+                reportsList.innerHTML = `<li>Error fetching reports: ${error.message}</li>`;
+            });
+        }
+
+
+        // =======================================
+        // 3. Quiz Mantığına Veri Kaydını Entegre Etme
+        // =======================================
+
+        // 1. Math Multiplication Quiz Logic (English) - GÜNCELLENDİ
         const questionEl = document.getElementById('question');
         const answerInput = document.getElementById('answer-input');
         const submitButton = document.getElementById('submit-button');
@@ -220,6 +473,7 @@
         let currentQuestionNumber = 0;
         const totalQuestions = 10;
         let correctAnswer = 0;
+        let currentMathQuestion = ''; // Kayıt için soru metnini tutar
 
         function generateRandomNumber(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -240,14 +494,15 @@
             const num2 = generateRandomNumber(1, 10);
             correctAnswer = num1 * num2;
             
-            questionEl.textContent = "Question " + currentQuestionNumber + ": " + num1 + " x " + num2 + " = ?";
+            currentMathQuestion = `${num1} x ${num2}`;
+            questionEl.textContent = "Question " + currentQuestionNumber + ": " + currentMathQuestion + " = ?";
             answerInput.value = '';
             feedbackEl.textContent = '';
             submitButton.disabled = false;
             answerInput.focus();
         }
 
-        function checkAnswer() {
+        async function checkAnswer() {
             if (submitButton.disabled) return; 
             
             const userAnswer = parseInt(answerInput.value);
@@ -256,8 +511,10 @@
                 feedbackEl.style.color = '#f1c40f'; // Yellowish warning
                 return;
             }
+            
+            let isCorrect = (userAnswer === correctAnswer);
 
-            if (userAnswer === correctAnswer) {
+            if (isCorrect) {
                 currentScore++;
                 scoreEl.textContent = currentScore;
                 feedbackEl.textContent = 'CORRECT! You are great.';
@@ -268,6 +525,15 @@
                 feedbackEl.textContent = 'WRONG! Try again.';
                 feedbackEl.style.color = '#e74c3c'; // Red
             }
+
+            // SONUCU KAYDETME
+            await saveQuizResult(
+                "Math", 
+                currentScore, 
+                currentQuestionNumber, 
+                isCorrect, 
+                `${currentMathQuestion} = ${userAnswer} (Correct: ${correctAnswer})`
+            );
         }
 
         submitButton.addEventListener('click', checkAnswer);
@@ -277,11 +543,10 @@
             }
         });
 
-        // Sayfa yüklendiğinde ilk soruyu oluştur
         generateNewQuestion();
 
         // ===============================================
-        // 2. Irregular Verbs Quiz Logic (English)
+        // 2. Irregular Verbs Quiz Logic (English) - GÜNCELLENDİ
         // ===============================================
 
         const irregularVerbs = [
@@ -321,6 +586,7 @@
         let currentVerbIndex = -1;
         const totalVerbQuestions = irregularVerbs.length;
         verbTotalQuestionsEl.textContent = totalVerbQuestions;
+        let currentVerbData = null; // Kayıt için fiil verisini tutar
 
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
@@ -329,13 +595,12 @@
             }
             return array;
         }
-        let shuffledVerbs = shuffleArray(irregularVerbs); // Karıştırılmış fiil listesi
+        let shuffledVerbs = shuffleArray(irregularVerbs); 
 
         function generateNewVerbQuestion() {
             currentVerbIndex++;
 
             if (currentVerbIndex >= totalVerbQuestions) {
-                // Quiz bittiğinde fiil quizini temizle ve sonucu göster
                 irregularVerbQuizContainer.innerHTML = `
                     <h3>Quiz Finished!</h3>
                     <p>Your Irregular Verbs score: ${currentVerbScore} / ${totalVerbQuestions}.</p>
@@ -344,8 +609,8 @@
                 return;
             }
 
-            const currentVerb = shuffledVerbs[currentVerbIndex];
-            verbBaseFormEl.textContent = `Verb Base Form (V1): ${currentVerb.v1}`;
+            currentVerbData = shuffledVerbs[currentVerbIndex];
+            verbBaseFormEl.textContent = `Verb Base Form (V1): ${currentVerbData.v1}`;
             
             verbV2Input.value = '';
             verbV3Input.value = '';
@@ -354,39 +619,48 @@
             verbV2Input.focus();
         }
 
-        function checkVerbAnswer() {
+        async function checkVerbAnswer() {
             if (verbSubmitButton.disabled) return;
 
-            const currentVerb = shuffledVerbs[currentVerbIndex];
+            const currentVerb = currentVerbData;
             const userAnswerV2 = verbV2Input.value.trim().toLowerCase();
             const userAnswerV3 = verbV3Input.value.trim().toLowerCase();
             
-            // Birden fazla doğru cevabı (was/were, got/gotten gibi) kontrol etmek için
             const correctV2s = currentVerb.v2.split('/').map(c => c.trim().toLowerCase());
             const correctV3s = currentVerb.v3.split('/').map(c => c.trim().toLowerCase());
             
-            // Cevapların doğruluğunu kontrol etme
             const isV2Correct = correctV2s.includes(userAnswerV2);
             const isV3Correct = correctV3s.includes(userAnswerV3);
             
             let feedbackMessage = '';
             let isCorrect = false;
+            let currentVerbNumber = currentVerbIndex + 1;
 
             if (isV2Correct && isV3Correct) {
                 currentVerbScore++;
                 verbScoreEl.textContent = currentVerbScore;
                 feedbackMessage = 'PERFECT! Both forms are correct.';
-                verbFeedbackEl.style.color = '#1abc9c'; // Green
+                verbFeedbackEl.style.color = '#1abc9c'; 
                 isCorrect = true;
             } else {
                 feedbackMessage = 'WRONG! The correct forms are: ';
                 feedbackMessage += `V2: ${currentVerb.v2}, V3: ${currentVerb.v3}.`;
-                verbFeedbackEl.style.color = '#e74c3c'; // Red
+                verbFeedbackEl.style.color = '#e74c3c'; 
                 isCorrect = false;
             }
 
             verbFeedbackEl.textContent = feedbackMessage;
             verbSubmitButton.disabled = true;
+
+            // SONUCU KAYDETME
+            await saveQuizResult(
+                "Irregular Verbs", 
+                currentVerbScore, 
+                currentVerbNumber, 
+                isCorrect, 
+                `V1: ${currentVerb.v1}, Your V2/V3: ${userAnswerV2}/${userAnswerV3}`
+            );
+
 
             if (isCorrect) {
                 setTimeout(generateNewVerbQuestion, 2000);
@@ -399,11 +673,10 @@
 
         verbV3Input.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                checkAnswer();
+                checkVerbAnswer();
             }
         });
 
-        // Sayfa yüklendiğinde fiil quizini başlat
         generateNewVerbQuestion();
     </script>
 </body>
