@@ -23,7 +23,11 @@
             color: #ecf0f1; 
             
             background-image: url('https://images.pexels.com/photos/1252890/pexels-photo-1252890.jpeg');
-            background-size: cover;
+            
+            /* GÜNCELLEME: background-size: cover; KALDIRILDI */
+            /* Yerine masaüstü için %130 genişlik eklendi */
+            background-size: 130% auto; 
+            
             background-position: center center;
             background-attachment: fixed;
             
@@ -40,7 +44,6 @@
             padding: 2rem 0;
             text-align: center;
             border-bottom: 2px solid #00ffff;
-            /* GÜNCELLEME: Neon kısıldı */
             text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff;
         }
         header h1 {
@@ -64,13 +67,13 @@
 
         /* Quiz Konteyner Stil (Tüm 3 Kutu için) */
         #quiz-container, #irregular-verb-quiz-container, #ai-quiz-generator-container {
-            flex: 1 1 30%; /* Üç kutu için esnek genişlik */
+            flex: 1 1 30%; 
             min-width: 350px; 
             max-width: 550px;
             padding: 30px;
             background: rgba(28, 40, 51, 0.85); 
             border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); /* GÜNCELLEME: Neon kısıldı */
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); 
             border: 1px solid #00ffff;
             border-top: 5px solid #00ffff; 
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -80,24 +83,24 @@
         
         /* AI Quiz Kutusuna özel stil */
         #ai-quiz-generator-container {
-             border-top: 5px solid #f1c40f; /* AI Kutusu için sarı */
-             box-shadow: 0 0 20px rgba(241, 196, 15, 0.2); /* GÜNCELLEME: Neon kısıldı */
+             border-top: 5px solid #f1c40f; 
+             box-shadow: 0 0 20px rgba(241, 196, 15, 0.2); 
              border: 1px solid #f1c40f;
         }
 
         /* Hover Animasyonu */
         #quiz-container:hover, #irregular-verb-quiz-container:hover, #ai-quiz-generator-container:hover {
             transform: translateY(-5px); 
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); /* GÜNCELLEME: Neon kısıldı */
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); 
         }
         #ai-quiz-generator-container:hover {
-            box-shadow: 0 0 30px rgba(241, 196, 15, 0.5); /* GÜNCELLEME: Neon kısıldı */
+            box-shadow: 0 0 30px rgba(241, 196, 15, 0.5); 
         }
 
         /* Başlıklar ve Metinler */
         h2 {
             color: #00ffff; 
-            text-shadow: 0 0 2px #00ffff, 0 0 4px #00ffff;  /* GÜNCELLEME: Neon kısıldı */
+            text-shadow: 0 0 2px #00ffff, 0 0 4px #00ffff;  
             width: 100%; 
             box-sizing: border-box; 
             border-bottom: 2px solid rgba(0, 255, 255, 0.2); 
@@ -105,26 +108,26 @@
             margin-top: 0;
         }
         #ai-quiz-generator-container h2 {
-             color: #f1c40f; /* AI Başlığı */
-             text-shadow: 0 0 2px #f1c40f, 0 0 4px #f1c40f;  /* GÜNCELLEME: Neon kısıldı */
+             color: #f1c40f; 
+             text-shadow: 0 0 2px #f1c40f, 0 0 4px #f1c40f;  
              border-bottom-color: rgba(241, 196, 15, 0.2);
         }
         
         p, span, li, label { 
             color: #ecf0f1; 
-            text-shadow: 0 0 1px rgba(236, 240, 241, 0.5); /* GÜNCELLEME: Neon kısıldı */
+            text-shadow: 0 0 1px rgba(236, 240, 241, 0.5); 
         }
         #question, #verb-base-form {
             color: #f1c40f; 
             font-size: 1.7rem !important;
-            text-shadow: 0 0 3px #f1c40f, 0 0 7px #f1c40f; /* GÜNCELLEME: Neon kısıldı */
+            text-shadow: 0 0 3px #f1c40f, 0 0 7px #f1c40f; 
         }
         
         /* Matematik Soru Stili */
         .q-divider {
             color: #00ffff;
             margin: 0 10px;
-            text-shadow: 0 0 3px #00ffff; /* GÜNCELLEME: Neon kısıldı */
+            text-shadow: 0 0 3px #00ffff; 
             font-weight: bold;
         }
 
@@ -164,12 +167,12 @@
             font-size: 1.1rem;
             font-weight: bold;
             transition: background-color 0.3s ease, transform 0.1s, box-shadow 0.3s ease;
-            box-shadow: 0 0 8px rgba(0, 255, 255, 0.4); /* GÜNCELLEME: Neon kısıldı */
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.4); 
             font-family: 'Orbitron', 'Segoe UI', sans-serif; 
         }
         button:hover {
             background-color: #ffffff; 
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); /* GÜNCELLEME: Neon kısıldı */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.6); 
             transform: scale(1.02);
         }
         button:disabled {
@@ -180,16 +183,16 @@
         
         /* Hata düzeltme/AI butonları için stil */
         #gemini-example-button, #next-verb-button, #math-hint-button {
-            display: none; /* Hepsi başlangıçta gizli */
+            display: none; 
             color: #0a0a1a; 
             margin-top: 10px;
         }
         #gemini-example-button, #math-hint-button {
-            background-color: #f1c40f; /* Sarı AI butonu */
+            background-color: #f1c40f; 
         }
         #next-verb-button {
-            background-color: #1abc9c; /* Yeşil Sonraki butonu */
-            margin-left: 10px; /* Aralarında boşluk */
+            background-color: #1abc9c; 
+            margin-left: 10px; 
         }
 
 
@@ -225,7 +228,7 @@
             border-radius: 10px;
             width: 80%;
             max-width: 600px;
-            box-shadow: 0 0 20px rgba(231, 76, 60, 0.4); /* GÜNCELLEME: Neon kısıldı */
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.4); 
             border: 1px solid #e74c3c;
             border-top: 5px solid #e74c3c;
             animation: slideIn 0.5s ease-out;
@@ -264,7 +267,7 @@
         .modal-content.gemini-modal-content {
             border-top-color: #f1c40f; 
             border-color: #f1c40f;
-            box-shadow: 0 0 20px rgba(241, 196, 15, 0.4); /* GÜNCELLEME: Neon kısıldı */
+            box-shadow: 0 0 20px rgba(241, 196, 15, 0.4); 
         }
         .modal-content.gemini-modal-content h2 {
             color: #f1c40f;
@@ -314,7 +317,6 @@
             border-left: 3px solid #f1c40f;
             padding-left: 10px;
             font-style: italic;
-            /* GÜNCELLEME: Çift dil için beyaz boşluk korunmalı */
             white-space: pre-wrap; 
         }
 
@@ -346,19 +348,24 @@
         
         /* Mobil Uyumluluk (Responsive) */
         @media (max-width: 768px) {
+            body {
+                 /* GÜNCELLEME: Mobil için dikey %130 (paralaks) */
+                background-size: auto 130%;
+            }
+            
             header h1 {
                 font-size: 2rem;
             }
             
             main {
-                flex-direction: column; /* Kutuları alt alta yığ */
-                align-items: center; /* Kutuları ortala */
+                flex-direction: column; 
+                align-items: center; 
                 padding: 10px;
             }
             
             #quiz-container, #irregular-verb-quiz-container, #ai-quiz-generator-container {
-                flex-basis: 100%; /* Tam genişlik kapla */
-                min-width: 90%; /* Ekranın %90'ı */
+                flex-basis: 100%; 
+                min-width: 90%; 
                 margin: 10px 0;
             }
             
@@ -386,7 +393,6 @@
 </head>
 <body>
     <header>
-        <!-- GÜNCELLEME: Başlık değişti -->
         <h1>Welcome to board Captain Selin!</h1>
     </header>
 
@@ -472,9 +478,7 @@
             
             <p id="pin-feedback" style="color: #f1c40f; font-weight: bold; min-height: 20px;"></p>
 
-            <!-- GÜNCELLEME: PIN ekranı düzeltildi (çift yazı kaldırıldı) -->
             <div id="auth-area">
-                <!-- GÜNCELLEME: PIN istemi İngilizce oldu -->
                 <p style="color: #f1c40f;">Enter PIN (Hint: 3355):</p>
                 <input type="password" id="parent-pin-input" placeholder="PIN Code">
                 <button id="pin-submit-button" style="background-color: #e74c3c;">Access</button>
@@ -482,7 +486,6 @@
 
             <div id="reports-area" style="display: none;">
                 <h3 style="color: #1abc9c;">Selin's Progress Reports</h3>
-                <!-- GÜNCELLEME: Buton metni değişti -->
                 <button id="gemini-summary-button" style="background-color: #f1c40f; color: #0a0a1a; margin-bottom: 15px;">✨ Admiral's Report</button>
                 <ul id="reports-list">
                     <li>Loading results...</li>
@@ -495,8 +498,7 @@
     <div id="gemini-modal" class="modal">
         <div class="modal-content gemini-modal-content">
             <span class="close-button gemini-close-button">&times;</span>
-            <!-- GÜNCELLEME: Yükleme metni değişti (JS'de) -->
-            <h2 id="gemini-modal-title" style="color: #f1c40f;">✨ AI Assistant</h2>
+            <h2 id="gemini-modal-title" style="color: #f1c40f;">✨ Engaging Lightspeed Communication...</h2>
             
             <div id="gemini-loading-spinner" style="display: none; text-align: center; margin-top: 20px;">
                 <div class="spinner"></div>
@@ -517,16 +519,19 @@
         
         // A. Fare (Mouse) ile Parallax
         window.addEventListener('mousemove', function(e) {
-            // Sadece fare varsa çalışsın (mobil olmayan)
             if (e.pointerType === "mouse") {
+                // GÜNCELLEME: w ve h 'SyntaxError' hatasını önlemek için fonksiyon içine taşındı
+                const w = window.innerWidth;
+                const h = window.innerHeight;
                 const mouseX = e.clientX;
                 const mouseY = e.clientY;
                 
-                // GÜNCELLEME: Hissiyat %60 artırıldı (100 -> 60)
-                const bgPosX = -(mouseX / 60);
-                const bgPosY = -(mouseY / 60);
+                // GÜNCELLEME: Hassasiyet %50-60 artırıldı (bölücü küçültüldü)
+                const sensitivity = 40; // (Eski: 60)
+                const bgPosX = (w / 2 - mouseX) / sensitivity;
+                const bgPosY = (h / 2 - mouseY) / sensitivity;
                 
-                document.body.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+                document.body.style.backgroundPosition = `calc(50% + ${bgPosX}px) calc(50% + ${bgPosY}px)`;
             }
         });
 
@@ -534,34 +539,26 @@
         let hasRequestedOrientation = false;
 
         function handleOrientation(event) {
-            // beta: (tilt front-to-back)
-            // gamma: (tilt left-to-right)
             let beta = event.beta;  
             let gamma = event.gamma; 
             
             if (beta === null || gamma === null) return;
 
-            // GÜNCELLEME: Cihazın yönünü (dikey/yatay) kontrol et
             const orientation = screen.orientation.type;
             let bgPosX, bgPosY;
             
-            // GÜNCELLEME: Hissiyat %60 artırıldı (8 -> 5)
-            const sensitivity = 5;
+            // GÜNCELLEME: Hassasiyet %50-60 artırıldı (bölücü küçültüldü)
+            const sensitivity = 3; // (Eski: 5)
             
             if (orientation.startsWith('landscape')) {
-                // YATAY (Landscape) Mod
-                // Eksenler değişir: beta (normalde ön/arka) artık sağ/sol tilt olur
-                bgPosX = -(beta / sensitivity);
-                // gamma (normalde sağ/sol) artık ön/arka tilt olur
-                bgPosY = -(gamma / sensitivity);
+                bgPosX = (beta / sensitivity);
+                bgPosY = (gamma / sensitivity);
             } else {
-                // DİKEY (Portrait) Mod
-                // Standart atama
-                bgPosX = -(gamma / sensitivity);
-                bgPosY = -(beta / sensitivity);
+                bgPosX = (gamma / sensitivity);
+                bgPosY = (beta / sensitivity);
             }
-
-            document.body.style.backgroundPosition = `${bgPosX}px ${bgPosY}px`;
+            
+            document.body.style.backgroundPosition = `calc(50% + ${bgPosX}px) calc(50% + ${bgPosY}px)`;
         }
 
         // iOS 13+ için izin isteme
@@ -581,7 +578,6 @@
         }
         
         // Jiroskobu sadece mobil cihazlarda etkinleştir (ilk dokunuşta)
-        // 'touchstart' olayı, kullanıcının mobil cihazda olduğunu gösterir
         window.addEventListener('touchstart', function() {
             if (!hasRequestedOrientation) {
                 requestOrientationPermission();
@@ -631,14 +627,12 @@
         const reportsList = document.getElementById('reports-list');
         const geminiSummaryButton = document.getElementById('gemini-summary-button'); 
         
-        // GÜNCELLEME: PIN değişti
         const CORRECT_PIN = "3355";
 
         parentAccessButton.onclick = () => {
             reportsArea.style.display = 'none';
             authArea.style.display = 'block';
             parentPinInput.value = '';
-            // GÜNCELLEME: PIN istemi düzeltildi ve İngilizce'ye çevrildi
             pinFeedback.textContent = "Enter PIN (Hint: 3355):";
             pinFeedback.style.color = '#f1c40f';
             parentModal.style.display = 'flex';
@@ -669,7 +663,6 @@
             }
         };
         
-        // GÜNCELLEME: PIN girişi için Enter tuşu eklendi
         parentPinInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 pinSubmitButton.click();
@@ -727,8 +720,7 @@
         function updateGeminiModal(content) {
             geminiLoadingSpinner.style.display = 'none';
             geminiModalContent.style.display = 'block';
-            // GÜNCELLEME: Çift dil için HTML'i işle
-            geminiModalContent.innerHTML = content;
+            geminiModalContent.innerHTML = content.replace(/\n/g, '<br>');
         }
 
         function hideGeminiModal() {
@@ -739,7 +731,6 @@
         
         // Gemini API'yi çağıran ana fonksiyon
         async function callGeminiAPI(userPrompt, systemInstructionText = null, useGrounding = false, jsonSchema = null) {
-            // GÜNCELLEME: Yükleme metni İngilizce ve Tematik olarak değişti
             showGeminiModal("✨ Engaging Lightspeed Communication...");
             
             const YOUR_API_KEY = "AIzaSyCi4V_K9kfGM2BU-DzF2uWG1mYlYyX17I4"; 
@@ -794,8 +785,7 @@
                             hideGeminiModal(); 
                             return text; 
                         }
-                        // GÜNCELLEME: Metni HTML olarak işle
-                        updateGeminiModal(text.replace(/\n/g, '<br>')); 
+                        updateGeminiModal(text); 
                         return text;
                     } else {
                         if (result.candidates && result.candidates[0].finishReason === "SAFETY") {
@@ -966,7 +956,6 @@
         }
 
         submitButton.addEventListener('click', checkAnswer);
-        // GÜNCELLEME: 'keypress' -> 'keydown'
         answerInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 checkAnswer();
@@ -1084,7 +1073,6 @@
             if (!currentVerbData) return;
 
             const verb = currentVerbData;
-            // GÜNCELLEME: Çift dil talebi
             const systemPrompt = "You are an English teacher. The user is an 8-year-old student named Selin. Write one, very simple example sentence for *each* of the 3 verb forms (V1, V2, V3). First show the sentence in **English**, then provide the **Ukrainian translation** on a new line. Format it clearly, using markdown for bolding the verbs.";
             const simplePrompt = `Write 3 very simple example sentences for an 8-year-old using the verb "${verb.v1}".
 1. One sentence using the base form (${verb.v1}).
@@ -1094,7 +1082,6 @@
             await callGeminiAPI(simplePrompt, systemPrompt);
         };
 
-        // GÜNCELLEME: 'keypress' -> 'keydown'
         verbV3Input.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 checkVerbAnswer();
@@ -1116,7 +1103,6 @@
         let aiQuizCorrectAnswers = []; 
         let aiQuizExplanations = []; 
 
-        // GÜNCELLEME: Çift dilli açıklama için JSON Şeması
         const quizSchema = {
             type: "OBJECT",
             properties: {
@@ -1128,8 +1114,8 @@
                             question: { type: "STRING" },
                             options: { type: "ARRAY", items: { type: "STRING" } },
                             correctAnswerIndex: { type: "NUMBER" },
-                            explanation_en: { type: "STRING" }, // İngilizce Açıklama
-                            explanation_uk: { type: "STRING" }  // Ukraynaca Açıklama
+                            explanation_en: { type: "STRING" }, 
+                            explanation_uk: { type: "STRING" }  
                         },
                         required: ["question", "options", "correctAnswerIndex", "explanation_en", "explanation_uk"]
                     }
@@ -1172,7 +1158,6 @@
             }
         };
         
-        // GÜNCELLEME: AI konu girişi için Enter tuşu eklendi
         aiTopicInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 aiGenerateButton.click();
@@ -1182,7 +1167,6 @@
         // Gemini'den gelen quizi HTML'e dönüştürür
         function renderAiQuiz(questions) {
             aiQuizCorrectAnswers = questions.map(q => q.correctAnswerIndex);
-            // GÜNCELLEME: Çift dilli açıklamaları sakla
             aiQuizExplanations = questions.map(q => ({
                 en: q.explanation_en,
                 uk: q.explanation_uk
@@ -1230,15 +1214,16 @@
                 // GÜNCELLEME: Çift dilli açıklamayı al ve göster
                 const explanation = aiQuizExplanations[qIndex];
                 const expDiv = document.getElementById(`ai-exp-${qIndex}`);
+                // HTML olarak ayarla (br etiketleri için)
                 const explanationHtml = `
                     <strong>(EN):</strong> ${explanation.en}<br>
                     <strong>(UK):</strong> ${explanation.uk}
                 `;
+                expDiv.innerHTML = explanationHtml; 
                 
                 if (userAnswer === correctIndex) {
                     score++;
                     labels[userAnswer].style.color = '#1abc9c'; // Doğruyu yeşil yap
-                    expDiv.innerHTML = explanationHtml;
                     expDiv.style.color = '#1abc9c';
                     expDiv.style.display = 'block';
                 } else {
@@ -1247,8 +1232,7 @@
                     }
                     labels[correctIndex].style.color = '#1abc9c'; // Doğruyu yine de yeşil göster
                     
-                    expDiv.innerHTML = explanationHtml; 
-                    expDiv.style.color = '#f1c40f'; // Açıklama sarı olsun
+                    expDiv.style.color = '#f1c44f'; // Açıklama sarı olsun
                     expDiv.style.display = 'block';
                 }
             });
