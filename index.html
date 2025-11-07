@@ -65,14 +65,16 @@
             align-items: flex-start; /* Kutuları üste hizala */
         }
 
-        /* Quiz Konteyner Stil (Tüm 3 Kutu için) */
-        #quiz-container, #irregular-verb-quiz-container, #ai-quiz-generator-container {
+        /* Quiz Konteyner Stil (Tüm 4 Kutu için) */
+        /* GÜNCELLEME: ai-story-generator-container eklendi */
+        #quiz-container, #irregular-verb-quiz-container, #ai-quiz-generator-container, #ai-story-generator-container {
             flex: 1 1 30%; 
             min-width: 350px; 
             max-width: 550px;
             padding: 30px;
             background: rgba(28, 40, 51, 0.85); 
             border-radius: 15px;
+            /* Varsayılan (Kutu 1) stili */
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); 
             border: 1px solid #00ffff;
             border-top: 5px solid #00ffff; 
@@ -81,23 +83,53 @@
             margin: 10px;
         }
         
-        /* AI Quiz Kutusuna özel stil */
-        #ai-quiz-generator-container, #ai-story-generator-container {
+        /* GÜNCELLEME: Kutu 3: AI Quiz (Sarı) */
+        /* ai-story-generator-container buradan kaldırıldı */
+        #ai-quiz-generator-container {
              border-top: 5px solid #f1c40f; 
              box-shadow: 0 0 20px rgba(241, 196, 15, 0.2); 
              border: 1px solid #f1c40f;
         }
+        
+        /* GÜNCELLEME: Kutu 2: Math (Yeşil) - YENİ STİL */
+        #quiz-container {
+            border: 1px solid #1abc9c;
+            border-top: 5px solid #1abc9c; 
+            box-shadow: 0 0 20px rgba(26, 188, 156, 0.2); 
+        }
+        
+        /* GÜNCELLEME: Kutu 4: AI Stories (Mor) - YENİ STİL */
+        #ai-story-generator-container {
+             border: 1px solid #9b59b6;
+             border-top: 5px solid #9b59b6; 
+             box-shadow: 0 0 20px rgba(155, 89, 182, 0.2); 
+        }
+
 
         /* Hover Animasyonu */
-        #quiz-container:hover, #irregular-verb-quiz-container:hover, #ai-quiz-generator-container:hover {
+        /* Kutu 1 (Varsayılan) */
+        #irregular-verb-quiz-container:hover {
             transform: translateY(-5px); 
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.5); 
         }
-        #ai-quiz-generator-container:hover, #ai-story-generator-container:hover {
+        /* Kutu 3 (Sarı) */
+        #ai-quiz-generator-container:hover {
+            transform: translateY(-5px); 
             box-shadow: 0 0 30px rgba(241, 196, 15, 0.5); 
+        }
+        /* Kutu 2 (Yeşil) */
+        #quiz-container:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 0 30px rgba(26, 188, 156, 0.5);
+        }
+        /* Kutu 4 (Mor) */
+        #ai-story-generator-container:hover {
+            transform: translateY(-5px); 
+            box-shadow: 0 0 30px rgba(155, 89, 182, 0.5);
         }
 
         /* Başlıklar ve Metinler */
+        /* Kutu 1 (Varsayılan) */
         h2 {
             color: #00ffff; 
             text-shadow: 0 0 2px #00ffff, 0 0 4px #00ffff;  
@@ -107,15 +139,23 @@
             padding-bottom: 15px;
             margin-top: 0;
         }
+        /* Kutu 3 (Sarı) */
         #ai-quiz-generator-container h2 {
              color: #f1c40f; 
              text-shadow: 0 0 2px #f1c40f, 0 0 4px #f1c40f;  
              border-bottom-color: rgba(241, 196, 15, 0.2);
         }
+        /* Kutu 2 (Yeşil) */
+        #quiz-container h2 {
+            color: #1abc9c; 
+            text-shadow: 0 0 2px #1abc9c, 0 0 4px #1abc9c;  
+            border-bottom: 2px solid rgba(26, 188, 156, 0.2); 
+        }
+        /* Kutu 4 (Mor) */
         #ai-story-generator-container h2 {
-             color: #f1c40f; 
-             text-shadow: 0 0 2px #f1c40f, 0 0 4px #f1c40f;  
-             border-bottom-color: rgba(241, 196, 15, 0.2);
+             color: #9b59b6; 
+             text-shadow: 0 0 2px #9b59b6, 0 0 4px #9b59b6;  
+             border-bottom: 2px solid rgba(155, 89, 182, 0.2);
         }
         
         p, span, li, label { 
@@ -297,7 +337,8 @@
         }
         .ai-question p {
             font-weight: bold;
-            color: #00ffff;
+            /* GÜNCELLEME: Kutu 3 temasıyla uyumlu (Sarı) */
+            color: #f1c40f;
             margin-bottom: 10px;
         }
         .ai-option {
@@ -327,10 +368,11 @@
         
         /* YENİ: AI Hikaye Vurgu Stili */
         .highlight-word {
-            color: #f1c40f;
+            /* GÜNCELLEME: Kutu 4 temasıyla uyumlu (Mor) */
+            color: #9b59b6;
             text-transform: uppercase;
             font-weight: bold;
-            text-shadow: 0 0 5px #f1c40f;
+            text-shadow: 0 0 5px #9b59b6;
         }
         
         /* YENİ: AI Hikaye Stilleri */
